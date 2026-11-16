@@ -64,6 +64,37 @@
     .hp-bar-fill {
       transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     }
+    /* Offline-First Core Fallback Styles (when opened as local .html without Wi-Fi) */
+    .hidden { display: none !important; }
+    .flex { display: flex; }
+    .inline-flex { display: inline-flex; }
+    .grid { display: grid; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .justify-center { justify-content: center; }
+    .flex-wrap { flex-wrap: wrap; }
+    .flex-col { flex-direction: column; }
+    .gap-1 { gap: 0.25rem; }
+    .gap-1\.5 { gap: 0.375rem; }
+    .gap-2 { gap: 0.5rem; }
+    .gap-2\.5 { gap: 0.625rem; }
+    .gap-3 { gap: 0.75rem; }
+    .gap-4 { gap: 1rem; }
+    .p-3 { padding: 0.75rem; }
+    .p-4 { padding: 1rem; }
+    .p-5 { padding: 1.25rem; }
+    .rounded-xl { border-radius: 0.75rem; }
+    .rounded-2xl { border-radius: 1rem; }
+    .rounded-3xl { border-radius: 1.5rem; }
+    .rounded-full { border-radius: 9999px; }
+    .text-center { text-align: center; }
+    .text-left { text-align: left; }
+    .font-bold { font-weight: 700; }
+    .font-extrabold { font-weight: 800; }
+    .w-full { width: 100%; }
+    .max-w-6xl { max-width: 72rem; margin-left: auto; margin-right: auto; }
+    button { cursor: pointer; color: inherit; background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(148, 163, 184, 0.3); }
+    input, select { color: #f8fafc; background: #0f172a; border: 1px solid #475569; border-radius: 0.5rem; padding: 0.35rem 0.6rem; }
   </style>
   <!-- Baked-In Self-Contained State Snapshot (Vinyl Vault Portable Pattern) -->
   <script id="baked-state-script">
@@ -78,6 +109,7 @@
     <input type="hidden" id="pokemath-hidden-coins" value="0" />
     <input type="hidden" id="pokemath-hidden-xp" value="0" />
     <input type="hidden" id="pokemath-hidden-badges" value="0" />
+    <input type="hidden" id="pokemath-hidden-signoffs" value="" />
     <input type="hidden" id="pokemath-hidden-state-json" value="" />
   </form>
 
@@ -99,6 +131,9 @@
             </span>
             <span id="streakPill" class="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">
               🔥 0 Streak
+            </span>
+            <span id="syncStatusPill" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-300 border border-sky-400/30">
+              🟢 Local Sync Ready
             </span>
             <span id="activeTurnPill" class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/40">
               🧢 Trainer Ozias
@@ -152,15 +187,21 @@
           </div>
         </div>
 
-        <!-- Reset Daily Progress Button -->
+        <!-- TOP BAR: RESET DAILY PROGRESS BUTTON -->
         <button id="topResetDailyBtn" type="button" class="px-2.5 py-1.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/35 border border-rose-400/50 text-xs font-extrabold text-rose-200 transition flex items-center gap-1" title="Reset today's battle streak &amp; practice boards while keeping Pokédex, Coins &amp; Badges">
           <span>🔄</span>
-          <span class="hidden md:inline">Reset Daily</span>
+          <span>Reset Daily</span>
         </button>
 
-        <!-- Local Sync & Mom/Trainer Hub Button -->
-        <button id="openHubBtn" type="button" class="px-2.5 py-1.5 rounded-xl bg-sky-500/25 hover:bg-sky-500/40 border border-sky-400/50 text-xs font-extrabold text-sky-200 transition flex items-center gap-1" title="Trainer &amp; Mom Hub + Local Sync">
+        <!-- TOP BAR: LOCAL SYNC & EXPORT BUTTON (Same as Violet's Game) -->
+        <button id="topSyncBtn" type="button" class="px-2.5 py-1.5 rounded-xl bg-sky-500/25 hover:bg-sky-500/40 border border-sky-400/50 text-xs font-extrabold text-sky-200 transition flex items-center gap-1" title="Offline Local Sync, Bake HTML &amp; Resync Progress">
           <span>💾</span>
+          <span>Local Sync</span>
+        </button>
+
+        <!-- Mom & Trainer Hub Modal Button -->
+        <button id="openHubBtn" type="button" class="px-2.5 py-1.5 rounded-xl bg-purple-600/80 hover:bg-purple-500 border border-purple-400/50 text-xs font-bold text-white transition flex items-center gap-1" title="Open Mom &amp; Trainer Hub">
+          <span>📋</span>
           <span>Trainer &amp; Mom Hub</span>
         </button>
 
@@ -1237,20 +1278,45 @@
       const hiddenCoins = document.getElementById('pokemath-hidden-coins');
       const hiddenXp = document.getElementById('pokemath-hidden-xp');
       const hiddenBadges = document.getElementById('pokemath-hidden-badges');
-      if (hiddenJson) hiddenJson.value = jsonStr;
-      if (hiddenCoins) hiddenCoins.value = String(state.coins);
-      if (hiddenXp) hiddenXp.value = String(state.xp);
+      const hiddenSignoffs = document.getElementById('pokemath-hidden-signoffs');
+
       const badgeCount = Object.values(state.badges).filter(Boolean).length;
-      if (hiddenBadges) hiddenBadges.value = String(badgeCount);
+      const signedKeys = Object.keys(state.sessionLog).filter((k) => state.sessionLog[k]);
+
+      if (hiddenJson) {
+        hiddenJson.value = jsonStr;
+        hiddenJson.setAttribute('value', jsonStr);
+      }
+      if (hiddenCoins) {
+        hiddenCoins.value = String(state.coins);
+        hiddenCoins.setAttribute('value', String(state.coins));
+      }
+      if (hiddenXp) {
+        hiddenXp.value = String(state.xp);
+        hiddenXp.setAttribute('value', String(state.xp));
+      }
+      if (hiddenBadges) {
+        hiddenBadges.value = String(badgeCount);
+        hiddenBadges.setAttribute('value', String(badgeCount));
+      }
+      if (hiddenSignoffs) {
+        hiddenSignoffs.value = signedKeys.join(',');
+        hiddenSignoffs.setAttribute('value', signedKeys.join(','));
+      }
 
       const snapInput = document.getElementById('syncJsonSnapshotInput');
       if (snapInput && snapInput.hasAttribute('readonly')) {
         snapInput.value = jsonStr;
       }
 
+      const syncPill = document.getElementById('syncStatusPill');
+      if (syncPill && state.lastSavedAt) {
+        syncPill.textContent = `🟢 Synced ${state.lastSavedAt}`;
+      }
+
       const tier = GRADE_TIERS[state.gradeMode] || GRADE_TIERS['3'];
       const caughtCount = Object.keys(state.caughtIds).filter((k) => state.caughtIds[k]).length;
-      const logCount = Object.values(state.sessionLog).filter(Boolean).length;
+      const logCount = signedKeys.length;
 
       const gEl = document.getElementById('hubTelemetryGrade');
       const sEl = document.getElementById('hubTelemetryStats');
@@ -1259,22 +1325,34 @@
       const tEl = document.getElementById('hubTelemetrySyncTime');
       if (gEl) gEl.textContent = tier.shortLabel;
       if (sEl) sEl.textContent = `${state.coins} Coins • ${state.xp} XP • ${badgeCount}/5 Badges`;
-      if (dEl) dEl.textContent = `${caughtCount} / ${POKEDEX_CREATURES.length} Creatures Caught`;
-      if (lEl) lEl.textContent = `${logCount} / ${LOG_ITEMS.length} Sessions Logged`;
-      if (tEl) tEl.textContent = state.lastSavedAt ? `Last synced: ${state.lastSavedAt}` : 'Auto-saved to browser & form';
+      if (dEl) dEl.textContent = `${caughtCount} / ${POKEDEX_CREATURES.length} Creatures • ${Object.keys(state.masteredCells).length}/144 Grid`;
+      if (lEl) lEl.textContent = `${logCount} / ${LOG_ITEMS.length} Sessions Signed Off`;
+      if (tEl) tEl.textContent = state.lastSavedAt ? `Last local sync: ${state.lastSavedAt}` : 'Auto-synced to browser & inline form';
     }
 
     function loadSavedState() {
+      // Priority 1: Check if baked-in state exists inside HTML (from "Download Updated Game HTML")
       if (window.__OZIAS_POKEMATH_STATE__ && typeof window.__OZIAS_POKEMATH_STATE__ === 'object') {
         applyPayloadToState(window.__OZIAS_POKEMATH_STATE__);
+      } else {
+        const hiddenJson = document.getElementById('pokemath-hidden-state-json');
+        if (hiddenJson && hiddenJson.value) {
+          try {
+            applyPayloadToState(JSON.parse(hiddenJson.value));
+          } catch (e) {
+            // Ignore malformed hidden JSON
+          }
+        }
       }
+      // Priority 2: Reconcile with browser localStorage if present
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
-          applyPayloadToState(JSON.parse(raw));
+          const parsed = JSON.parse(raw);
+          applyPayloadToState(parsed);
         }
       } catch (e) {
-        // Ignore sandboxed storage restriction
+        // Ignore storage errors in sandboxed iframes
       }
       syncInlineFormAndTelemetry();
     }
@@ -3121,11 +3199,29 @@
     document.getElementById('topResetDailyBtn').addEventListener('click', resetDailyBoardsOnly);
     document.getElementById('modalResetDailyBtn').addEventListener('click', resetDailyBoardsOnly);
 
-    document.getElementById('openHubBtn').addEventListener('click', () => {
+    function refreshAllViews() {
+      updateHeaderAndHqUI();
+      renderWarmupOrbs();
+      renderBattleArena();
+      loadNextBattleQuestion();
+      loadNextSpeedQuestion();
+      renderMatrixBoard();
+      generateAreaModelProblem();
+      generateFractionProblem();
+      renderQuestProblem();
+      renderPokedexStage();
+      renderSessionLogList();
+      syncInlineFormAndTelemetry();
+    }
+
+    function openParentAndSyncModal() {
       saveState();
       renderSessionLogList();
       document.getElementById('hubModal').classList.remove('hidden');
-    });
+    }
+
+    document.getElementById('openHubBtn').addEventListener('click', openParentAndSyncModal);
+    document.getElementById('topSyncBtn').addEventListener('click', openParentAndSyncModal);
 
     document.getElementById('closeHubModalBtn').addEventListener('click', () => {
       document.getElementById('hubModal').classList.add('hidden');
