@@ -4,6 +4,22 @@
 
 **[🎮 LAUNCH OZIAS'S POKÉMATH LEAGUE (krunked-fpv.github.io/ozias_laboratory) 🚀](https://krunked-fpv.github.io/ozias_laboratory/)** • **[📦 GitHub Repository (`krunked-fpv/ozias_laboratory`)](https://github.com/krunked-fpv/ozias_laboratory)**
 
+## ✨ What's New
+
+### 🚀 Arena 6: Cosmic Poké-Radar & Mega-Fusion Lab! *(Nov 2026 — [PR #2](https://github.com/krunked-fpv/ozias_laboratory/pull/2))*
+* **🛸 Brand-New Arena 6 (`6. Cosmic Radar & Fusion ✨`):**
+  * **📡 Cosmic Coordinate Radar (`<canvas>`):** Animated neon star-chart radar with a rotating sweep beam, live `(X, Y)` crosshair lock, expanding sonar ripples, Hot/Cold directional compass echoes, and a 5-Signal Star Constellation Expedition! Scales across **Quadrant I (`0..8` & `0..10`)** in Grades 3–5 up to a **full 4-Quadrant Cosmic Plane (`−5..+5`)** with negative integers, mirror reflections, and two-step algebra warps in Grade 6!
+  * **🧬 Mega-Fusion Equation Forge:** Pick **any 2 caught Pokédex creatures** to preview a live custom twin-gradient hybrid SVG sprite and mashup name (e.g., *Voltchu + Pyrokit → Voltokit*), then tap-to-merge Energy Crystal number cards (`+`, `−`, `×`, `÷`) to hit the exact **Target Fusion Power** and save creations to Ozias's persistent **Mega-Fusion Trophy Hall**!
+* **🪐 6th Official Gym Badge & 2 New Mythic Creatures (`18` Total in the Living Pokédex):**
+  * Earn the **6. Cosmic Badge** (complete a 5-Signal Radar Expedition or forge 3 Mega-Fusions) to awaken **#017 Mythic Galaxion** (Cosmic Ringed Star-Dragon), and forge your first Mega-Fusion to awaken **#018 Mythic Prismforge** (Radiant Prism Alchemist)!
+  * Backward-compatible with 5-badge saves—earning all **6/6** upgrades the Grand Champion Banner to **Cosmic Grand Master**!
+* **🔊 New Synth FX & Math-Aware Speech:** Added custom Web Audio `'radar'` sonar pings and `'fusion'` shimmer arpeggios, plus upgraded text-to-speech so fractions (*"3 over 6"* instead of *"March 6"*), ratios (*"3 to 5"*), and units read naturally.
+* **🐛 13 Surfaced Bugs Squashed:** Fixed offline-mode `#fxCanvas` layout push-down (so baked offline `index.html` files work cleanly without Wi-Fi), added an inline Poké-Ball SVG favicon, mirrored feedback toasts inside `#hubModal`, normalized all sub-views in the HTML Baker, removed Grade 6 hint spoilers & expanded procedural fraction/percent/ratio generators, fixed Battle Arena's 8-second Crit Timer & smart input parsing (`1,200`, `x = 7`, `−5`, fractions), checked partner evolution on Badge XP, fixed Speed-Catch `00:00` hang & post-timer lock, fixed Area Model blank-input spoilers, and made Volt-Runner fair across phones, tablets, and desktops with tap-on-canvas lane switching.
+
+### 🛠️ Core Engine, Sync & Anti-Spoiler Hardening *([PR #1](https://github.com/krunked-fpv/ozias_laboratory/pull/1))*
+* Hardened 3-tier persistence (`Shadow-Cookie Auto-Healer` family pulse, timestamped HTML Baker vs. `localStorage` reconciliation, clean DOM-cloned HTML Baker, and 2-step Full Career Reset safety).
+* Upgraded math choices (`buildChoices`), Unicode-safe emoji icons (`getIconGlyph`), 5 distinct starter/creature SVG silhouettes, Legendary `#016 Astralux` badge gating, delta-time Volt-Runner speed, and anti-spoiler/anti-farming fixes across Arenas 0–5.
+
 ## 🌟 What Is This Repo?
 
 Welcome to **`ozias_laboratory`**—a custom-built, Pokémon-inspired math RPG and interactive training arcade engineered for **Trainer Ozias** (and his co-op tag-team partner, **Mom Marisa**)!
@@ -73,7 +89,7 @@ To guarantee that Ozias's **18-Creature Living Pokédex**, **6 Official League G
 
 ### 🛸 Arena 6: Cosmic Poké-Radar Expedition & Mega-Fusion Equation Lab!
 * **📡 Mode 6A — Cosmic Coordinate Radar (`<canvas>`):** An animated neon Star-Chart Radar that scales from **Quadrant I (`0..8` & `0..10`)** in Grades 3–5 to a **full 4-Quadrant Cosmic Plane (`−5..+5`)** in Grade 6! Decode math transmissions, compass flight vectors, rectangle corners, midpoints, reflections, and two-step algebra coordinates by tapping directly on the radar grid—with expanding sonar ripples, Hot/Cold directional compass echoes, and a 5-signal Star Constellation tracker!
-* **🧬 Mode 6B — Mega-Fusion Equation Forge:** Pick **any two caught Pokédex creatures** to preview a live custom twin-gradient hybrid SVG creature and mashup name (e.g., *Voltchu + Pyrokit = Voltkit*), then tap-to-merge glowing **Energy Crystal Number Cards** with `+`, `−`, `×`, `÷` to hit the exact **Target Fusion Power**! Every forged hybrid joins Ozias's persistent **Mega-Fusion Trophy Hall**!
+* **🧬 Mode 6B — Mega-Fusion Equation Forge:** Pick **any two caught Pokédex creatures** to preview a live custom twin-gradient hybrid SVG creature and mashup name (e.g., *Voltchu + Pyrokit = Voltokit*), then tap-to-merge glowing **Energy Crystal Number Cards** with `+`, `−`, `×`, `÷` to hit the exact **Target Fusion Power**! Every forged hybrid joins Ozias's persistent **Mega-Fusion Trophy Hall**!
 
 ## 🛠️ Tech Stack & Zero-Dependency Portability
 
