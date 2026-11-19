@@ -253,19 +253,22 @@
           };
         }
         // Detect Ozias's PokéMath League state
-        else if ("xp" in obj && ("pokedex" in obj || "badges" in obj || "gradeLevel" in obj)) {
+        else if ("xp" in obj && ("pokedex" in obj || "caughtIds" in obj || "badges" in obj || "gradeLevel" in obj || "gradeMode" in obj)) {
           var badgeCount = Array.isArray(obj.badges)
             ? obj.badges.filter(Boolean).length
             : typeof obj.badges === "object" && obj.badges
             ? Object.keys(obj.badges).filter(function (k) { return !!obj.badges[k]; }).length
             : 0;
-          var caughtCount = Array.isArray(obj.pokedex)
-            ? obj.pokedex.length
-            : typeof obj.pokedex === "object" && obj.pokedex
-            ? Object.keys(obj.pokedex).filter(function (k) { return !!obj.pokedex[k]; }).length
+          var dexObj = obj.pokedex || obj.caughtIds;
+          var caughtCount = Array.isArray(dexObj)
+            ? dexObj.length
+            : typeof dexObj === "object" && dexObj
+            ? Object.keys(dexObj).filter(function (k) { return !!dexObj[k]; }).length
             : 0;
+          var gradeMap = { "3": "Lv.30", "4": "Lv.40", "5": "Lv.50", "6": "Lv.60+", "adaptive": "AUTO" };
+          var resolvedGrade = obj.gradeLevel || gradeMap[String(obj.gradeMode)] || "Lv.30";
           pulse.ozias = {
-            grade: obj.gradeLevel || "Lv.30",
+            grade: resolvedGrade,
             xp: Number(obj.xp) || 0,
             coins: Number(obj.coins || obj.pokeCoins) || 0,
             badges: badgeCount,
@@ -1548,7 +1551,7 @@
       { id: 'c3', dexNum: '#003', name: 'Aquafin', type: '🌊 Water', rarity: 'Starter', color: '#38bdf8', lore: 'Dives through deep ocean trenches using fraction bars to measure water pressure!' },
       { id: 'c4', dexNum: '#004', name: 'Leafsprout', type: '🌿 Grass', rarity: 'Starter', color: '#4ade80', lore: 'Calculates the exact area and perimeter of every sunlit forest clearing!' },
       { id: 'c5', dexNum: '#005', name: 'Geodig', type: '🪨 Rock', rarity: 'Common', color: '#a8a29e', lore: 'Stacks granite boulders in perfect 8×8 square arrays deep inside Boulder Canyon.' },
-      { id: 'c6', dexNum: '#006', name: 'zephyrwing', displayName: 'Zephyrwing', type: '🌪️ Flying', rarity: 'Common', color: '#7dd3fc', lore: 'Rides high-altitude jet streams at 120 miles per hour—60 miles every 30 minutes!' },
+      { id: 'c6', dexNum: '#006', name: 'Zephyrwing', displayName: 'Zephyrwing', type: '🌪️ Flying', rarity: 'Common', color: '#7dd3fc', lore: 'Rides high-altitude jet streams at 120 miles per hour—60 miles every 30 minutes!' },
       { id: 'c7', dexNum: '#007', name: 'Magmacore', type: '🔥 Fire/Rock', rarity: 'Uncommon', color: '#f87171', lore: 'Lives inside volcano chambers where temperatures reach 1,000 degrees!' },
       { id: 'c8', dexNum: '#008', name: 'Glacierpaws', type: '❄️ Ice', rarity: 'Uncommon', color: '#67e8f9', lore: 'Freezes snowflakes into symmetrical hexagons with 6 equal 60-degree angles!' },
       { id: 'c9', dexNum: '#009', name: 'Ironshield', type: '⚙️ Steel', rarity: 'Rare', color: '#cbd5e1', lore: 'Its armor plating is forged from prime numbers and factor pairs!' },
@@ -1578,11 +1581,36 @@
       { key: 'log6', label: 'Session 6: Volt-Runner Arcade & Boss Battle Victory' }
     ];
 
+    // Unicode-safe emoji glyph extractor (avoids splitting surrogate pairs like '⚡🐭')
+    function getIconGlyph(iconStr, index = 0) {
+      const glyphs = Array.from(String(iconStr || ''));
+      return glyphs[index] || glyphs[0] || '⚡';
+    }
+
+    // Fisher-Yates unbiased shuffle
+    function shuffleArray(arr) {
+      const copy = arr.slice();
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const tmp = copy[i];
+        copy[i] = copy[j];
+        copy[j] = tmp;
+      }
+      return copy;
+    }
+
     // Custom SVG Creature Renderer
     function renderCreatureSvg(creatureId, accentColor = '#facc15', sizeClass = 'w-14 h-14') {
-      const idx = parseInt(String(creatureId).replace(/\D/g, ''), 10) || 1;
+      const shapeByKey = {
+        voltchu: 0, c1: 0, c8: 0,
+        pyrokit: 1, c2: 1, c6: 1, c7: 1, c11: 1, c12: 1,
+        aquafin: 2, c3: 2, c5: 2, c9: 2, c13: 2,
+        leafsprout: 3, c4: 3,
+        c10: 4, c14: 4, c15: 4, c16: 4
+      };
+      const key = String(creatureId || '').toLowerCase();
       const shapes = [
-        // Electric Mouse / Dragon
+        // 0: Electric Mouse / Eared Creature
         `<svg viewBox="0 0 80 80" class="${sizeClass}">
           <circle cx="40" cy="44" r="24" fill="${accentColor}" stroke="#ffffff" stroke-width="3"/>
           <polygon points="20,26 12,6 30,18" fill="${accentColor}" stroke="#ffffff" stroke-width="2.5"/>
@@ -1592,27 +1620,39 @@
           <circle cx="24" cy="48" r="4.5" fill="#ef4444"/><circle cx="56" cy="48" r="4.5" fill="#ef4444"/>
           <path d="M 34 50 Q 40 56 46 50" stroke="#0f172a" stroke-width="3" fill="none" stroke-linecap="round"/>
         </svg>`,
-        // Fire / Spike Crest
+        // 1: Fire / Dragon Spike Crest
         `<svg viewBox="0 0 80 80" class="${sizeClass}">
           <polygon points="40,8 52,26 68,18 60,42 66,64 40,58 14,64 20,42 12,18 28,26" fill="${accentColor}" stroke="#ffffff" stroke-width="3"/>
           <circle cx="32" cy="40" r="4" fill="#0f172a"/><circle cx="48" cy="40" r="4" fill="#0f172a"/>
           <path d="M 33 50 L 40 46 L 47 50" stroke="#0f172a" stroke-width="3" fill="none" stroke-linecap="round"/>
         </svg>`,
-        // Water / Crystal Shell
+        // 2: Water / Armored Crystal Shell
         `<svg viewBox="0 0 80 80" class="${sizeClass}">
           <rect x="16" y="18" width="48" height="46" rx="18" fill="${accentColor}" stroke="#ffffff" stroke-width="3"/>
           <circle cx="31" cy="38" r="4.2" fill="#0f172a"/><circle cx="49" cy="38" r="4.2" fill="#0f172a"/>
           <path d="M 30 50 Q 40 57 50 50" stroke="#0f172a" stroke-width="3" fill="none" stroke-linecap="round"/>
           <circle cx="40" cy="24" r="4" fill="#ffffff" opacity="0.6"/>
         </svg>`,
-        // Cosmic / Legendary Star
+        // 3: Grass / Leaf Sprout Dino
+        `<svg viewBox="0 0 80 80" class="${sizeClass}">
+          <path d="M 40 8 C 52 10 56 20 40 28 C 24 20 28 10 40 8 Z" fill="#86efac" stroke="#ffffff" stroke-width="2.5"/>
+          <ellipse cx="40" cy="46" rx="25" ry="21" fill="${accentColor}" stroke="#ffffff" stroke-width="3"/>
+          <circle cx="31" cy="42" r="4" fill="#0f172a"/><circle cx="49" cy="42" r="4" fill="#0f172a"/>
+          <circle cx="32" cy="40.5" r="1.4" fill="#ffffff"/><circle cx="50" cy="40.5" r="1.4" fill="#ffffff"/>
+          <path d="M 33 52 Q 40 58 47 52" stroke="#0f172a" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </svg>`,
+        // 4: Cosmic / Legendary Star
         `<svg viewBox="0 0 80 80" class="${sizeClass}">
           <polygon points="40,6 49,26 71,29 55,44 59,66 40,55 21,66 25,44 9,29 31,26" fill="${accentColor}" stroke="#ffffff" stroke-width="3"/>
           <circle cx="33" cy="38" r="3.8" fill="#0f172a"/><circle cx="47" cy="38" r="3.8" fill="#0f172a"/>
           <path d="M 35 47 Q 40 52 45 47" stroke="#0f172a" stroke-width="2.8" fill="none" stroke-linecap="round"/>
         </svg>`
       ];
-      return shapes[idx % shapes.length];
+      if (Object.prototype.hasOwnProperty.call(shapeByKey, key)) {
+        return shapes[shapeByKey[key]];
+      }
+      const numIdx = parseInt(key.replace(/\D/g, ''), 10) || 1;
+      return shapes[(numIdx - 1) % shapes.length];
     }
 
     // =====================================================
@@ -1622,6 +1662,7 @@
 
     const state = {
       lastSavedAt: null,
+      savedAtMs: 0,
       gradeMode: '3', // '3', '4', '5', '6', or 'adaptive'
       starterId: 'voltchu',
       coopMode: false,
@@ -1675,40 +1716,79 @@
       return {
         version: '2026-11-16_ozias_pokemath_v1',
         lastSavedAt: state.lastSavedAt || new Date().toLocaleTimeString(),
+        savedAtMs: state.savedAtMs || 0,
         gradeMode: state.gradeMode,
         starterId: state.starterId,
         coopMode: state.coopMode,
+        muted: !!state.muted,
         oziasPoints: state.oziasPoints,
         momPoints: state.momPoints,
         coins: state.coins,
         xp: state.xp,
         streak: state.streak,
-        badges: state.badges,
-        caughtIds: state.caughtIds,
+        badges: { ...state.badges },
+        caughtIds: { ...state.caughtIds },
         battlesWon: state.battlesWon,
         speedBestScore: state.speedBestScore,
-        masteredCells: state.masteredCells,
-        sessionLog: state.sessionLog
+        masteredCells: { ...state.masteredCells },
+        sessionLog: { ...state.sessionLog }
       };
     }
 
     function applyPayloadToState(parsed) {
-      if (!parsed || typeof parsed !== 'object') return;
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return false;
       if (parsed.gradeMode && GRADE_TIERS[parsed.gradeMode]) state.gradeMode = parsed.gradeMode;
       if (parsed.starterId && STARTER_LINES[parsed.starterId]) state.starterId = parsed.starterId;
       if (typeof parsed.coopMode === 'boolean') state.coopMode = parsed.coopMode;
-      if (typeof parsed.oziasPoints === 'number') state.oziasPoints = parsed.oziasPoints;
-      if (typeof parsed.momPoints === 'number') state.momPoints = parsed.momPoints;
-      if (typeof parsed.coins === 'number') state.coins = parsed.coins;
-      if (typeof parsed.xp === 'number') state.xp = parsed.xp;
-      if (typeof parsed.streak === 'number') state.streak = parsed.streak;
+      if (typeof parsed.muted === 'boolean') state.muted = parsed.muted;
+      if (typeof parsed.oziasPoints === 'number' && Number.isFinite(parsed.oziasPoints)) state.oziasPoints = parsed.oziasPoints;
+      if (typeof parsed.momPoints === 'number' && Number.isFinite(parsed.momPoints)) state.momPoints = parsed.momPoints;
+      if (typeof parsed.coins === 'number' && Number.isFinite(parsed.coins)) state.coins = parsed.coins;
+      if (typeof parsed.xp === 'number' && Number.isFinite(parsed.xp)) state.xp = parsed.xp;
+      if (typeof parsed.streak === 'number' && Number.isFinite(parsed.streak)) state.streak = parsed.streak;
       if (parsed.lastSavedAt) state.lastSavedAt = parsed.lastSavedAt;
-      if (parsed.badges) Object.assign(state.badges, parsed.badges);
-      if (parsed.caughtIds) state.caughtIds = { ...state.caughtIds, ...parsed.caughtIds };
-      if (typeof parsed.battlesWon === 'number') state.battlesWon = parsed.battlesWon;
-      if (typeof parsed.speedBestScore === 'number') state.speedBestScore = parsed.speedBestScore;
-      if (parsed.masteredCells) state.masteredCells = { ...parsed.masteredCells };
-      if (parsed.sessionLog) Object.assign(state.sessionLog, parsed.sessionLog);
+      if (typeof parsed.savedAtMs === 'number' && Number.isFinite(parsed.savedAtMs)) state.savedAtMs = parsed.savedAtMs;
+      if (parsed.badges && typeof parsed.badges === 'object') {
+        state.badges = { boulder: false, cascade: false, thunder: false, rainbow: false, master: false };
+        Object.keys(state.badges).forEach((k) => {
+          if (typeof parsed.badges[k] === 'boolean') state.badges[k] = parsed.badges[k];
+        });
+      }
+      if (parsed.caughtIds && typeof parsed.caughtIds === 'object') {
+        state.caughtIds = { c1: true, c2: true, c3: true, c4: true };
+        Object.keys(parsed.caughtIds).forEach((k) => {
+          if (parsed.caughtIds[k]) state.caughtIds[k] = true;
+        });
+      }
+      if (typeof parsed.battlesWon === 'number' && Number.isFinite(parsed.battlesWon)) state.battlesWon = parsed.battlesWon;
+      if (typeof parsed.speedBestScore === 'number' && Number.isFinite(parsed.speedBestScore)) state.speedBestScore = parsed.speedBestScore;
+      if (parsed.masteredCells && typeof parsed.masteredCells === 'object') {
+        state.masteredCells = {};
+        Object.keys(parsed.masteredCells).forEach((k) => {
+          if (parsed.masteredCells[k]) state.masteredCells[k] = true;
+        });
+      }
+      if (parsed.sessionLog && typeof parsed.sessionLog === 'object') {
+        state.sessionLog = { log1: false, log2: false, log3: false, log4: false, log5: false, log6: false };
+        Object.keys(state.sessionLog).forEach((k) => {
+          if (typeof parsed.sessionLog[k] === 'boolean') state.sessionLog[k] = parsed.sessionLog[k];
+        });
+      }
+      return true;
+    }
+
+    function computePayloadProgressScore(p) {
+      if (!p || typeof p !== 'object') return -1;
+      const caught = p.caughtIds && typeof p.caughtIds === 'object'
+        ? Object.keys(p.caughtIds).filter((k) => p.caughtIds[k]).length
+        : 0;
+      const badges = p.badges && typeof p.badges === 'object'
+        ? Object.keys(p.badges).filter((k) => p.badges[k]).length
+        : 0;
+      const cells = p.masteredCells && typeof p.masteredCells === 'object'
+        ? Object.keys(p.masteredCells).filter((k) => p.masteredCells[k]).length
+        : 0;
+      return (Number(p.xp) || 0) + (Number(p.coins) || 0) + caught * 100 + badges * 200 + cells * 15;
     }
 
     function syncInlineFormAndTelemetry() {
@@ -1758,6 +1838,7 @@
 
       const tier = GRADE_TIERS[state.gradeMode] || GRADE_TIERS['3'];
       const caughtCount = Object.keys(state.caughtIds).filter((k) => state.caughtIds[k]).length;
+      const masteredCount = Object.keys(state.masteredCells).filter((k) => state.masteredCells[k]).length;
       const logCount = signedKeys.length;
 
       const gEl = document.getElementById('hubTelemetryGrade');
@@ -1767,40 +1848,79 @@
       const tEl = document.getElementById('hubTelemetrySyncTime');
       if (gEl) gEl.textContent = tier.shortLabel;
       if (sEl) sEl.textContent = `${state.coins} Coins • ${state.xp} XP • ${badgeCount}/5 Badges`;
-      if (dEl) dEl.textContent = `${caughtCount} / ${POKEDEX_CREATURES.length} Creatures • ${Object.keys(state.masteredCells).length}/144 Grid`;
+      if (dEl) dEl.textContent = `${caughtCount} / ${POKEDEX_CREATURES.length} Creatures • ${masteredCount}/144 Grid`;
       if (lEl) lEl.textContent = `${logCount} / ${LOG_ITEMS.length} Sessions Signed Off`;
       if (tEl) tEl.textContent = state.lastSavedAt ? `Last local sync: ${state.lastSavedAt}` : 'Auto-synced to browser & inline form';
     }
 
     function loadSavedState() {
-      // Priority 1: Check if baked-in state exists inside HTML (from "Download Updated Game HTML")
+      // Priority 1: Read baked-in state inside HTML (from "Download Updated Game HTML")
+      let bakedPayload = null;
       if (window.__OZIAS_POKEMATH_STATE__ && typeof window.__OZIAS_POKEMATH_STATE__ === 'object') {
-        applyPayloadToState(window.__OZIAS_POKEMATH_STATE__);
+        bakedPayload = window.__OZIAS_POKEMATH_STATE__;
       } else {
         const hiddenJson = document.getElementById('pokemath-hidden-state-json');
         if (hiddenJson && hiddenJson.value) {
           try {
-            applyPayloadToState(JSON.parse(hiddenJson.value));
+            bakedPayload = JSON.parse(hiddenJson.value);
           } catch (e) {
             // Ignore malformed hidden JSON
           }
         }
       }
-      // Priority 2: Reconcile with browser localStorage if present
+
+      // Priority 2: Read browser localStorage if present
+      let localPayload = null;
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
-          const parsed = JSON.parse(raw);
-          applyPayloadToState(parsed);
+          localPayload = JSON.parse(raw);
         }
       } catch (e) {
         // Ignore storage errors in sandboxed iframes
+      }
+
+      // Reconcile baked state vs localStorage without letting stale localStorage clobber a newer baked file
+      let chosen = null;
+      let bakedWon = false;
+      if (bakedPayload && localPayload) {
+        const bakedTs = typeof bakedPayload.savedAtMs === 'number' ? bakedPayload.savedAtMs : 0;
+        const localTs = typeof localPayload.savedAtMs === 'number' ? localPayload.savedAtMs : 0;
+        if (bakedTs > 0 && localTs > 0) {
+          bakedWon = bakedTs > localTs;
+          chosen = bakedWon ? bakedPayload : localPayload;
+        } else if (bakedTs > 0 && localTs === 0) {
+          bakedWon = true;
+          chosen = bakedPayload;
+        } else if (localTs > 0 && bakedTs === 0) {
+          chosen = localPayload;
+        } else {
+          bakedWon = computePayloadProgressScore(bakedPayload) > computePayloadProgressScore(localPayload);
+          chosen = bakedWon ? bakedPayload : localPayload;
+        }
+      } else if (bakedPayload) {
+        bakedWon = true;
+        chosen = bakedPayload;
+      } else if (localPayload) {
+        chosen = localPayload;
+      }
+
+      if (chosen) {
+        applyPayloadToState(chosen);
+        if (bakedWon) {
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(getSerializablePayload()));
+          } catch (e) {
+            // Ignore storage errors
+          }
+        }
       }
       syncInlineFormAndTelemetry();
     }
 
     function saveState() {
-      state.lastSavedAt = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      state.savedAtMs = Date.now();
+      state.lastSavedAt = new Date(state.savedAtMs).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
       const payload = getSerializablePayload();
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
@@ -1894,7 +2014,15 @@
           window.speechSynthesis.cancel();
           setTimeout(() => {
             try {
-              const utter = new SpeechSynthesisUtterance(String(text).replace(/×/g, ' times ').replace(/÷/g, ' divided by '));
+              const spoken = String(text)
+                .replace(/×/g, ' times ')
+                .replace(/÷/g, ' divided by ')
+                .replace(/−/g, ' minus ')
+                .replace(/²/g, ' squared')
+                .replace(/³/g, ' cubed')
+                .replace(/⁴/g, ' to the 4th power')
+                .replace(/⁵/g, ' to the 5th power');
+              const utter = new SpeechSynthesisUtterance(spoken);
               utter.lang = 'en-US';
               utter.rate = 0.96;
               utter.pitch = 1.05;
@@ -2042,10 +2170,11 @@
 
     function unlockBadge(badgeKey, badgeTitle) {
       if (!state.badges[badgeKey]) {
+        const hadAstralux = !!state.caughtIds.c16;
         state.badges[badgeKey] = true;
         state.coins += 60;
         state.xp += 50;
-        const allFive = Object.values(state.badges).every(Boolean);
+        const allFive = GYM_BADGE_DEFS.every((b) => !!state.badges[b.key]);
         if (allFive) {
           state.caughtIds.c16 = true; // Unlock Legendary Astralux
         }
@@ -2053,8 +2182,11 @@
         updateHeaderAndHqUI();
         renderPokedexStage();
         playSound('fanfare');
-        spawnConfetti(80);
-        showBanner('🏅', `GYM BADGE UNLOCKED: ${badgeTitle}! (+60 Coins & +50 XP!)`, 'amber');
+        spawnConfetti(allFive ? 120 : 80);
+        const legendMsg = allFive && !hadAstralux
+          ? ' ✨ ALL 5 BADGES EARNED — Legendary #016 Astralux awakened in your Pokédex!'
+          : '';
+        showBanner('🏅', `GYM BADGE UNLOCKED: ${badgeTitle}! (+60 Coins & +50 XP!)${legendMsg}`, 'amber');
       }
     }
 
@@ -2066,20 +2198,38 @@
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    function buildChoices(correctAnswer, isString = false, customDistractors = []) {
+    function buildChoices(correctAnswer, isString = false, customDistractors = [], allowNegative = false) {
       if (isString) {
         const set = new Set([String(correctAnswer), ...customDistractors.map(String)]);
-        return Array.from(set).slice(0, 4).sort(() => Math.random() - 0.5);
+        return shuffleArray(Array.from(set).slice(0, 4));
       }
       const num = Number(correctAnswer);
       const set = new Set([num]);
-      const offsets = [-10, -6, -4, -3, -2, -1, 1, 2, 3, 4, 6, 8, 10, 12];
+      const canBeNeg = allowNegative || num < 0 || customDistractors.some((d) => Number(d) < 0);
+      const minVal = canBeNeg ? -60 : (num === 0 ? 0 : 1);
+
+      // Honor explicit custom distractors first (e.g., PEMDAS or sign-flip traps)
+      customDistractors.forEach((d) => {
+        const val = Number(d);
+        if (set.size < 4 && Number.isFinite(val) && val !== num && (canBeNeg || val >= minVal)) {
+          set.add(val);
+        }
+      });
+
+      const offsets = Math.abs(num) >= 200
+        ? [-100, -20, -10, -4, -2, -1, 1, 2, 4, 10, 20, 100]
+        : [-10, -6, -4, -3, -2, -1, 1, 2, 3, 4, 6, 8, 10, 12];
       let guard = 0;
-      while (set.size < 4 && guard < 40) {
+      while (set.size < 4 && guard < 60) {
         guard++;
         const delta = offsets[Math.floor(Math.random() * offsets.length)];
         const cand = num + delta;
-        if (cand >= -50 && cand !== num) set.add(cand);
+        if (cand >= minVal && cand !== num) set.add(cand);
+      }
+      let step = 1;
+      while (set.size < 4) {
+        set.add(num + step);
+        step++;
       }
       return Array.from(set).sort((a, b) => a - b);
     }
@@ -2097,12 +2247,22 @@
           const b = randInt(3, 10);
           const prod = a * b;
           if (isMult) {
+            let multHint;
+            if (b > 5) {
+              multHint = `💡 Array Strategy: Think of ${a} rows of ${b}. Split ${a} × ${b} into (${a} × 5) + (${a} × ${b - 5})!`;
+            } else if (b === 5) {
+              multHint = `💡 Fives Strategy: Skip-count by 5s ${a} times (or take half of ${a} × 10)!`;
+            } else if (b === 4) {
+              multHint = `💡 Double-Double Strategy: Double ${a} (${a} + ${a} = ${a * 2}), then double that number again!`;
+            } else {
+              multHint = `💡 Triple Strategy: Double ${a} (${a} × 2 = ${a * 2}), then add one more ${a}!`;
+            }
             return {
               topic: '⚡ Lv.30 Thunder Multiplication',
               prompt: `${a} × ${b} = ?`,
               answer: prod,
               choices: buildChoices(prod),
-              hint: `💡 Array Strategy: Think of ${a} rows of ${b}. You can split ${a} × ${b} into (${a} × 5) + (${a} × ${b - 5})!`
+              hint: multHint
             };
           } else {
             return {
@@ -2118,24 +2278,35 @@
           if (mode === 1) {
             const a = randInt(6, 12);
             const b = randInt(6, 12);
+            let factHint;
+            if (b > 10) {
+              factHint = `💡 Break It Apart: (${a} × 10 = ${a * 10}) plus (${a} × ${b - 10} = ${a * (b - 10)})!`;
+            } else if (b === 10) {
+              factHint = `💡 Tens Trick: Multiply ${a} × 10 by placing a zero at the end!`;
+            } else {
+              factHint = `💡 Break It Apart: Split ${b} into (5 + ${b - 5}), then add (${a} × 5 = ${a * 5}) + (${a} × ${b - 5} = ${a * (b - 5)})!`;
+            }
             return {
               topic: '🌊 Lv.40 Master Fact Strike',
               prompt: `${a} × ${b} = ?`,
               answer: a * b,
               choices: buildChoices(a * b),
-              hint: `💡 Break It Apart: (${a} × 10 = ${a * 10}) plus (${a} × ${b - 10} = ${a * (b - 10)})!`
+              hint: factHint
             };
           } else if (mode === 2) {
             const a = randInt(12, 26);
             const b = randInt(3, 8);
             const t = Math.floor(a / 10) * 10;
             const o = a % 10;
+            const splitHint = o === 0
+              ? `💡 Friendly Tens: Multiply ${a / 10} × ${b} = ${(a / 10) * b}, then multiply by 10!`
+              : `💡 Area Split: Multiply Tens (${t} × ${b} = ${t * b}) + Ones (${o} × ${b} = ${o * b})!`;
             return {
               topic: '🌊 Lv.40 2-Digit Power Multiply',
               prompt: `${a} × ${b} = ?`,
               answer: a * b,
               choices: buildChoices(a * b),
-              hint: `💡 Area Split: Multiply Tens (${t} × ${b} = ${t * b}) + Ones (${o} × ${b} = ${o * b})!`
+              hint: splitHint
             };
           } else {
             const b = randInt(4, 9);
@@ -2199,12 +2370,17 @@
           } else {
             const a = randInt(15, 35);
             const b = randInt(12, 22);
+            const bTens = Math.floor(b / 10) * 10;
+            const bOnes = b % 10;
+            const mult6Hint = bOnes === 0
+              ? `💡 Friendly Tens: Multiply ${a} × ${b / 10}, then multiply by 10!`
+              : `💡 Split ${b} into (${bTens} + ${bOnes}) and multiply each by ${a}!`;
             return {
               topic: '🐉 Lv.60+ Master Multiplication',
               prompt: `${a} × ${b} = ?`,
               answer: a * b,
               choices: buildChoices(a * b),
-              hint: `💡 Split ${b} into (${Math.floor(b / 10) * 10} + ${b % 10}) and multiply each by ${a}!`
+              hint: mult6Hint
             };
           }
         }
@@ -2263,12 +2439,16 @@
           const a = randInt(-18, -4);
           const b = randInt(6, 25);
           const ans = a + b;
+          const absA = Math.abs(a);
+          const intHint = b >= absA
+            ? `💡 Number Line Shift: Start at ${a} and move ${b} steps right past 0 (Equals ${b} − ${absA})!`
+            : `💡 Number Line Shift: Start at ${a} and move ${b} steps right toward 0 — you remain ${absA} − ${b} below zero!`;
           return {
             topic: '🐉 Lv.60+ Shadow Integer Shift',
             prompt: `(${a}) + ${b} = ?`,
             answer: ans,
-            choices: buildChoices(ans, false, [-ans, a - b]),
-            hint: `💡 Number Line Shift: Start at ${a} below zero and move ${b} steps to the right (Equals ${b} − ${Math.abs(a)})!`
+            choices: buildChoices(ans, false, [-ans, a - b], true),
+            hint: intHint
           };
         }
       }
@@ -2284,6 +2464,7 @@
             topic: '🌊 Lv.30 Unit Fraction Surge',
             prompt: `${n1}/${den} + ${n2}/${den} = ?/${den} (Enter top numerator!)`,
             answer: sumN,
+            fractionDen: den,
             choices: buildChoices(sumN),
             hint: `💡 Like Denominators: When the bottom number (${den}) is the same, just add the top numerators (${n1} + ${n2})!`
           };
@@ -2301,6 +2482,7 @@
             topic: '🌊 Lv.40 Equivalent Fraction Multiplier',
             prompt: `${p.f1} = ?/${p.d2} (Find the missing numerator!)`,
             answer: p.ans,
+            fractionDen: p.d2,
             choices: buildChoices(p.ans),
             hint: `💡 Golden Fraction Rule: Whatever you multiply the bottom denominator by to get ${p.d2}, multiply the top numerator by the exact same number!`
           };
@@ -2428,7 +2610,8 @@
 
       // Partner evolution display
       const pInfo = getActivePartnerStageObj();
-      document.getElementById('headerPartnerIcon').textContent = pInfo.current.icon.slice(0, 2);
+      document.getElementById('headerPartnerIcon').textContent = getIconGlyph(pInfo.current.icon, 0);
+      document.getElementById('muteIcon').textContent = state.muted ? '🔇' : '🔊';
       document.getElementById('hqPartnerName').textContent = pInfo.current.name;
       document.getElementById('hqPartnerStageLabel').textContent = `${pInfo.line.element} Partner`;
       document.getElementById('hqPartnerSvgBox').innerHTML = renderCreatureSvg(state.starterId, pInfo.current.color, 'w-16 h-16');
@@ -2525,6 +2708,7 @@
           saveState();
           updateHeaderAndHqUI();
           renderBattleArena();
+          drawArcadeFrame();
         });
         grid.appendChild(btn);
       });
@@ -2542,6 +2726,8 @@
       generateAreaModelProblem();
       generateFractionProblem();
       renderQuestProblem();
+      spawnArcadeWave();
+      drawArcadeFrame();
       showBanner('🎚️', `Grade Difficulty Dialed to: ${GRADE_TIERS[newMode].name}!`, 'amber');
     }
 
@@ -2577,6 +2763,7 @@
       ];
       orbTypes.forEach((orb) => {
         const q = generateMathProblem(orb.cat);
+        let solved = false;
         const card = document.createElement('div');
         card.className = `p-3.5 rounded-2xl bg-slate-900/90 border ${orb.border} flex flex-col justify-between gap-2`;
         const optsHtml = q.choices
@@ -2587,16 +2774,32 @@
           .join('');
         card.innerHTML = `
           <div>
-            <div class="text-[11px] font-extrabold uppercase text-slate-400">${orb.title}</div>
+            <div class="flex items-center justify-between gap-1">
+              <span class="text-[11px] font-extrabold uppercase text-slate-400">${orb.title}</span>
+              <span class="orb-status-badge hidden text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-emerald-400/20 text-emerald-300 border border-emerald-400/40">✓ Charged</span>
+            </div>
             <div class="text-base font-extrabold text-white game-font mt-1">${q.prompt}</div>
           </div>
           <div class="grid grid-cols-2 gap-1.5 pt-1">${optsHtml}</div>
         `;
-        card.querySelectorAll('.orb-ans-btn').forEach((b) => {
+        const orbButtons = card.querySelectorAll('.orb-ans-btn');
+        orbButtons.forEach((b) => {
           b.addEventListener('click', () => {
+            if (solved) return;
             const picked = Number(b.getAttribute('data-ans'));
             if (picked === Number(q.answer)) {
-              b.className = 'px-2.5 py-1 rounded-lg bg-emerald-400 text-slate-950 text-xs font-extrabold';
+              solved = true;
+              card.classList.add('border-emerald-400');
+              const statusBadge = card.querySelector('.orb-status-badge');
+              if (statusBadge) statusBadge.classList.remove('hidden');
+              orbButtons.forEach((btn) => {
+                btn.disabled = true;
+                if (btn === b) {
+                  btn.className = 'orb-ans-btn px-2.5 py-1 rounded-lg bg-emerald-400 text-slate-950 text-xs font-extrabold cursor-default';
+                } else {
+                  btn.className = 'orb-ans-btn px-2.5 py-1 rounded-lg bg-slate-900 text-slate-500 text-xs font-bold border border-slate-800 opacity-50 cursor-default';
+                }
+              });
               grantRewards(15, 15, `Power Orb Charged: ${q.prompt.replace('?', q.answer)}!`);
             } else {
               playSound('oops');
@@ -2617,6 +2820,12 @@
     // 7. NAVIGATION TABS
     // =====================================================
     function switchTab(tabId) {
+      if (state.activeTab === 'arcade' && tabId !== 'arcade' && typeof pauseArcade === 'function') {
+        pauseArcade();
+      }
+      if (state.activeTab === 'speedcatch' && tabId !== 'speedcatch' && typeof stopSpeedTimer === 'function') {
+        stopSpeedTimer(false);
+      }
       state.activeTab = tabId;
       document.querySelectorAll('.stage-view').forEach((el) => {
         el.classList.toggle('hidden', el.id !== `view-${tabId}`);
@@ -2708,8 +2917,18 @@
 
     function evaluateBattleAttack(userAnswer) {
       if (!state.currentBattleQ) return;
+      const rawStr = String(userAnswer ?? '').trim();
+      if (rawStr === '') return;
+
       const expected = Number(state.currentBattleQ.answer);
-      const given = Number(userAnswer);
+      let given = Number(rawStr);
+      // Also accept full fraction input (e.g. "5/8") on numerator-only fraction prompts
+      if (Number.isNaN(given) && state.currentBattleQ.fractionDen) {
+        const fracMatch = rawStr.match(/^(\d+)\s*\/\s*(\d+)$/);
+        if (fracMatch && Number(fracMatch[2]) === Number(state.currentBattleQ.fractionDen)) {
+          given = Number(fracMatch[1]);
+        }
+      }
       if (Number.isNaN(given)) return;
 
       if (given === expected) {
@@ -2728,6 +2947,7 @@
           const caughtCreature = POKEDEX_CREATURES[state.enemyIdx % POKEDEX_CREATURES.length];
           state.caughtIds[caughtCreature.id] = true;
           state.battlesWon += 1;
+          state.playerHp = 100; // Restore Partner HP Shield for the next battle
           playSound('catch');
           spawnConfetti(60);
 
@@ -2760,6 +2980,7 @@
         playSound('oops');
         state.streak = 0;
         state.playerHp = Math.max(20, state.playerHp - 15);
+        saveState();
         const hintEl = document.getElementById('battleHintBox');
         hintEl.classList.remove('hidden');
         hintEl.textContent = state.currentBattleQ.hint;
@@ -2815,9 +3036,10 @@
       state.enemyIdx = bosses[Math.floor(Math.random() * bosses.length)];
       state.enemyMaxHp = 140;
       state.enemyHp = 140;
+      state.playerHp = 100;
       playSound('laser');
       loadNextBattleQuestion();
-      showBanner('👑', `GYM LEADER BOSS APPROACHING! Defeat ${POKEDEX_CREATURES[state.enemyIdx].name} for massive XP!`, 'amber');
+      showBanner('👑', `GYM LEADER BOSS APPROACHING! Defeat ${POKEDEX_CREATURES[state.enemyIdx].displayName || POKEDEX_CREATURES[state.enemyIdx].name} for massive XP!`, 'amber');
     });
 
     // Built-In Trainer Scratchpad Canvas
@@ -2828,10 +3050,16 @@
 
     function resizeScratchCanvas() {
       const rect = scratchCanvas.parentElement.getBoundingClientRect();
-      if (rect.width > 0 && scratchCanvas.width !== rect.width) {
-        scratchCanvas.width = rect.width;
-        scratchCanvas.height = rect.height;
+      const targetW = Math.round(rect.width);
+      const targetH = Math.round(rect.height);
+      if (targetW > 0 && targetH > 0 && (scratchCanvas.width !== targetW || scratchCanvas.height !== targetH)) {
+        scratchCanvas.width = targetW;
+        scratchCanvas.height = targetH;
       }
+    }
+
+    function clearScratchCanvas() {
+      scratchCtx.clearRect(0, 0, scratchCanvas.width, scratchCanvas.height);
     }
 
     function getScratchPos(e) {
@@ -2885,9 +3113,7 @@
       });
     });
 
-    document.getElementById('clearScratchBtn').addEventListener('click', () => {
-      scratchCtx.clearRect(0, 0, scratchCanvas.width, scratchCanvas.height);
-    });
+    document.getElementById('clearScratchBtn').addEventListener('click', clearScratchCanvas);
 
     // =====================================================
     // 9. STAGE 2: POKÉ-BALL SPEED CATCH & 12x12 POWER MATRIX
@@ -2895,8 +3121,30 @@
     let speedTimerInterval = null;
     let speedSecondsLeft = 60;
 
+    function formatSpeedClock(sec) {
+      if (sec <= 0) return 'ZEN ∞';
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function stopSpeedTimer(resetClock = false) {
+      if (speedTimerInterval) {
+        clearInterval(speedTimerInterval);
+        speedTimerInterval = null;
+      }
+      const startBtn = document.getElementById('speedStartBtn');
+      if (startBtn) startBtn.textContent = '▶ Start Sprint';
+      if (resetClock) {
+        const dur = parseInt(document.getElementById('speedDurationSelect').value, 10) || 0;
+        speedSecondsLeft = dur;
+        document.getElementById('speedClockReadout').textContent = formatSpeedClock(dur);
+      }
+    }
+
     function switchSpeedSubMode(sub) {
       state.speedSubMode = sub;
+      if (sub !== 'drill') stopSpeedTimer(false);
       ['drill', 'grid'].forEach((m) => {
         document.getElementById(`speedSub-${m}`).classList.toggle('hidden', m !== sub);
       });
@@ -2911,6 +3159,14 @@
 
     document.querySelectorAll('.speed-sub-btn').forEach((btn) => {
       btn.addEventListener('click', () => switchSpeedSubMode(btn.getAttribute('data-speed-sub')));
+    });
+
+    document.getElementById('speedDurationSelect').addEventListener('change', (e) => {
+      if (!speedTimerInterval) {
+        const dur = parseInt(e.target.value, 10) || 0;
+        speedSecondsLeft = dur;
+        document.getElementById('speedClockReadout').textContent = formatSpeedClock(dur);
+      }
     });
 
     function loadNextSpeedQuestion() {
@@ -2934,7 +3190,7 @@
             if (state.speedCaughtSession > state.speedBestScore) {
               state.speedBestScore = state.speedCaughtSession;
             }
-            grantRewards(15, 15, `Quick Ball Catch! (${state.speedCaughtSession} in a row!)`);
+            grantRewards(15, 15, `Quick Ball Catch! (${state.speedCaughtSession} caught!)`);
             if (state.speedCaughtSession >= 10) {
               unlockBadge('cascade', 'Cascade Speed-Catch Badge');
             }
@@ -2961,9 +3217,7 @@
 
     document.getElementById('speedStartBtn').addEventListener('click', () => {
       if (speedTimerInterval) {
-        clearInterval(speedTimerInterval);
-        speedTimerInterval = null;
-        document.getElementById('speedStartBtn').textContent = '▶ Start Sprint';
+        stopSpeedTimer(false);
         return;
       }
       const dur = parseInt(document.getElementById('speedDurationSelect').value, 10) || 0;
@@ -2975,6 +3229,7 @@
         return;
       }
       speedSecondsLeft = dur;
+      document.getElementById('speedClockReadout').textContent = formatSpeedClock(speedSecondsLeft);
       document.getElementById('speedStartBtn').textContent = '⏸ Stop';
       playSound('laser');
       speedTimerInterval = setInterval(() => {
@@ -2984,9 +3239,7 @@
           const s = speedSecondsLeft % 60;
           document.getElementById('speedClockReadout').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
         } else {
-          clearInterval(speedTimerInterval);
-          speedTimerInterval = null;
-          document.getElementById('speedStartBtn').textContent = '▶ Start Sprint';
+          stopSpeedTimer(false);
           playSound('fanfare');
           spawnConfetti(60);
           showBanner('🏆', `Speed-Catch Sprint Complete! Ozias caught ${state.speedCaughtSession} targets!`, 'amber');
@@ -2997,12 +3250,28 @@
     // 12x12 Power Matrix
     function selectMatrixCell(r, c) {
       state.activeMatrixCell = { r, c };
-      const prod = r * c;
       document.getElementById('matrixPromptText').textContent = `${r} × ${c} = ?`;
-      document.getElementById('matrixFactFamilyHint').textContent = `Fact Family: ${r} × ${c} = ?  •  ${prod} ÷ ${r} = ${c}`;
+      document.getElementById('matrixFactFamilyHint').textContent = `Fact Family: ${r} × ${c} = ?  •  ? ÷ ${r} = ${c}  •  ${c} × ${r} = ?`;
       document.getElementById('matrixAnsInput').value = '';
       renderMatrixBoard();
       document.getElementById('matrixAnsInput').focus();
+    }
+
+    function pickMatrixCellInRange(minVal, maxVal) {
+      const unsolved = [];
+      for (let r = minVal; r <= maxVal; r++) {
+        for (let c = minVal; c <= maxVal; c++) {
+          if (!state.masteredCells[`${r}x${c}`]) {
+            unsolved.push({ r, c });
+          }
+        }
+      }
+      if (unsolved.length > 0) {
+        const pick = unsolved[Math.floor(Math.random() * unsolved.length)];
+        selectMatrixCell(pick.r, pick.c);
+      } else {
+        selectMatrixCell(randInt(minVal, maxVal), randInt(minVal, maxVal));
+      }
     }
 
     function renderMatrixBoard() {
@@ -3045,14 +3314,25 @@
       });
     }
 
-    document.getElementById('matrixVerifyBtn').addEventListener('click', () => {
+    function verifyMatrixCellAnswer() {
       const { r, c } = state.activeMatrixCell;
-      const val = parseInt(document.getElementById('matrixAnsInput').value, 10);
+      const inputEl = document.getElementById('matrixAnsInput');
+      const val = parseInt(inputEl.value, 10);
+      if (Number.isNaN(val)) return;
       if (val === r * c) {
-        state.masteredCells[`${r}x${c}`] = true;
-        state.masteredCells[`${c}x${r}`] = true; // Commutative property twin!
+        const keyA = `${r}x${c}`;
+        const keyB = `${c}x${r}`;
+        const alreadyMastered = !!state.masteredCells[keyA];
+        state.masteredCells[keyA] = true;
+        state.masteredCells[keyB] = true; // Commutative property twin!
+        inputEl.value = '';
         const masteredTotal = Object.keys(state.masteredCells).filter((k) => state.masteredCells[k]).length;
-        grantRewards(20, 20, `Power Cell Lit! ${r} × ${c} = ${r * c} (and ${c} × ${r} = ${r * c})!`);
+        if (alreadyMastered) {
+          playSound('attack');
+          showBanner('✨', `Correct! ${r} × ${c} = ${r * c} is already lit Gold — pick an unlit cell for new rewards!`, 'emerald');
+        } else {
+          grantRewards(20, 20, `Power Cell Lit! ${r} × ${c} = ${r * c} (and ${c} × ${r} = ${r * c})!`);
+        }
         if (masteredTotal >= 12) {
           unlockBadge('cascade', 'Cascade 12×12 Matrix Badge');
         }
@@ -3061,14 +3341,22 @@
         playSound('oops');
         showBanner('🔢', `Try splitting ${r} × ${c} into smaller parts on the Scratchpad!`, 'amber');
       }
+    }
+
+    document.getElementById('matrixVerifyBtn').addEventListener('click', verifyMatrixCellAnswer);
+    document.getElementById('matrixAnsInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        verifyMatrixCellAnswer();
+      }
     });
 
     document.getElementById('matrixRandomCellBtn').addEventListener('click', () => {
-      selectMatrixCell(randInt(3, 12), randInt(3, 12));
+      pickMatrixCellInRange(3, 12);
     });
 
     document.getElementById('matrixAutoRowBtn').addEventListener('click', () => {
-      selectMatrixCell(randInt(6, 9), randInt(6, 9));
+      pickMatrixCellInRange(6, 9);
     });
 
     // =====================================================
@@ -3108,6 +3396,10 @@
         a = randInt(35, 85);
         b = randInt(12, 19);
       }
+      // Ensure ones digit is non-zero so Box B is always a meaningful partial product
+      if (a % 10 === 0) {
+        a += randInt(1, 8);
+      }
       const tenPart = Math.floor(a / 10) * 10;
       const onePart = a - tenPart;
       state.activeAreaProb = { a, b, tenPart, onePart };
@@ -3144,7 +3436,7 @@
 
     document.getElementById('areaNewProbBtn').addEventListener('click', generateAreaModelProblem);
 
-    document.getElementById('areaVerifyBtn').addEventListener('click', () => {
+    function verifyAreaModelSolution() {
       const { a, b, tenPart, onePart } = state.activeAreaProb;
       const expA = tenPart * b;
       const expB = onePart * b;
@@ -3159,9 +3451,18 @@
       if (uA === expA && uB === expB && uTot === expTotal) {
         grantRewards(35, 35, `Mega-Split Master! (${tenPart}×${b}=${expA}) + (${onePart}×${b}=${expB}) = ${expTotal}!`);
         unlockBadge('thunder', 'Thunder Area-Model Split Badge');
+        generateAreaModelProblem();
       } else {
         playSound('oops');
         showBanner('🧪', `Check each box: Box A (${tenPart} × ${b} = ${expA}), Box B (${onePart} × ${b} = ${expB}), then add ${expA} + ${expB}!`, 'amber');
+      }
+    }
+
+    document.getElementById('areaVerifyBtn').addEventListener('click', verifyAreaModelSolution);
+    document.getElementById('areaInputTotal').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        verifyAreaModelSolution();
       }
     });
 
@@ -3170,26 +3471,29 @@
       const grade = getEffectiveNumericGrade();
       const presets = grade <= 3
         ? [
-            { n1: 3, d1: 6, n2: 2, d2: 6, q: 'Add both Hyper Potion bars: 3/6 + 2/6 = ?', ans: '5/6', opts: ['5/6', '1/6', '5/12', '6/6'] },
-            { n1: 3, d1: 4, n2: 1, d2: 4, q: 'Which Potion Bar has MORE energy: 3/4 or 1/4?', ans: '3/4', opts: ['3/4', '1/4', 'Equal', '4/4'] },
-            { n1: 2, d1: 8, n2: 5, d2: 8, q: 'Combine both Potion Bars: 2/8 + 5/8 = ?', ans: '7/8', opts: ['7/8', '3/8', '7/16', '8/8'] }
+            { n1: 3, d1: 6, n2: 2, d2: 6, label1: '3/6', label2: '2/6', q: 'Add both Hyper Potion bars: 3/6 + 2/6 = ?', ans: '5/6', opts: ['5/6', '1/6', '5/12', '6/6'] },
+            { n1: 3, d1: 4, n2: 1, d2: 4, label1: '3/4', label2: '1/4', q: 'Which Potion Bar has MORE energy: 3/4 or 1/4?', ans: '3/4', opts: ['3/4', '1/4', 'Equal', '4/4'] },
+            { n1: 2, d1: 8, n2: 5, d2: 8, label1: '2/8', label2: '5/8', q: 'Combine both Potion Bars: 2/8 + 5/8 = ?', ans: '7/8', opts: ['7/8', '3/8', '7/16', '8/8'] }
           ]
         : grade === 4
         ? [
-            { n1: 1, d1: 2, n2: 4, d2: 8, q: 'Look at the two bars: 1/2 equals how many eighths (?/8)?', ans: '4/8', opts: ['4/8', '2/8', '6/8', '3/8'] },
-            { n1: 2, d1: 3, n2: 6, d2: 9, q: 'Equivalent Energy: 2/3 is equal to which ninths fraction?', ans: '6/9', opts: ['6/9', '4/9', '3/9', '8/9'] },
-            { n1: 3, d1: 5, n2: 6, d2: 10, q: 'Equivalent Energy: 3/5 equals how many tenths?', ans: '6/10', opts: ['6/10', '3/10', '5/10', '8/10'] }
+            { n1: 1, d1: 2, n2: 4, d2: 8, label1: '1/2', label2: '?/8', q: 'Look at the two bars: 1/2 equals how many eighths (?/8)?', ans: '4/8', opts: ['4/8', '2/8', '6/8', '3/8'] },
+            { n1: 2, d1: 3, n2: 6, d2: 9, label1: '2/3', label2: '?/9', q: 'Equivalent Energy: 2/3 is equal to which ninths fraction?', ans: '6/9', opts: ['6/9', '4/9', '3/9', '8/9'] },
+            { n1: 3, d1: 5, n2: 6, d2: 10, label1: '3/5', label2: '?/10', q: 'Equivalent Energy: 3/5 equals how many tenths?', ans: '6/10', opts: ['6/10', '3/10', '5/10', '8/10'] }
           ]
         : [
-            { n1: 1, d1: 2, n2: 1, d2: 4, q: 'Unlike Fractions: Convert 1/2 to 2/4, then add 1/2 + 1/4 = ?', ans: '3/4', opts: ['3/4', '2/6', '1/4', '4/4'] },
-            { n1: 3, d1: 4, n2: 75, d2: 100, q: 'Decimal & Percent Reactor: What percentage is 3/4 of a full tank?', ans: '75%', opts: ['75%', '25%', '50%', '80%'] },
-            { n1: 2, d1: 5, n2: 4, d2: 10, q: 'Decimal Reactor: What is 2/5 (or 4/10) written as a decimal?', ans: '0.4', opts: ['0.4', '0.25', '0.5', '0.04'] }
+            { n1: 1, d1: 2, n2: 1, d2: 4, label1: '1/2', label2: '1/4', q: 'Unlike Fractions: Convert 1/2 to 2/4, then add 1/2 + 1/4 = ?', ans: '3/4', opts: ['3/4', '2/6', '1/4', '4/4'] },
+            { n1: 3, d1: 4, n2: 75, d2: 100, label1: '3/4', label2: '?% of tank', q: 'Decimal & Percent Reactor: What percentage is 3/4 of a full tank?', ans: '75%', opts: ['75%', '25%', '50%', '80%'] },
+            { n1: 2, d1: 5, n2: 4, d2: 10, label1: '2/5', label2: '4/10', q: 'Decimal Reactor: What is 2/5 (or 4/10) written as a decimal?', ans: '0.4', opts: ['0.4', '0.25', '0.5', '0.04'] }
           ];
 
-      const item = presets[randInt(0, presets.length - 1)];
+      const prevQ = state.activeFracProb ? state.activeFracProb.q : null;
+      const candidates = presets.filter((p) => p.q !== prevQ);
+      const pool = candidates.length > 0 ? candidates : presets;
+      const item = pool[randInt(0, pool.length - 1)];
       state.activeFracProb = item;
 
-      const drawBar = (n, d, colorCls, label) => {
+      const drawBar = (n, d, colorCls, title, valueLabel) => {
         const capD = Math.min(d, 12);
         const capN = Math.round((n / d) * capD);
         let segs = '';
@@ -3199,8 +3503,8 @@
         return `
           <div class="space-y-1.5">
             <div class="flex justify-between text-xs font-extrabold text-slate-200">
-              <span>${label}</span>
-              <span class="text-amber-300">${n}/${d} (${Math.round((n / d) * 100)}%)</span>
+              <span>${title}</span>
+              <span class="text-amber-300">${valueLabel}</span>
             </div>
             <div class="flex gap-1 p-1.5 rounded-xl bg-slate-900 border border-slate-700">${segs}</div>
           </div>
@@ -3208,13 +3512,13 @@
       };
 
       document.getElementById('fracVisualContainer').innerHTML =
-        drawBar(item.n1, item.d1, 'bg-sky-400', 'Potion Tank Alpha') +
-        drawBar(item.n2, item.d2, 'bg-emerald-400', 'Potion Tank Beta');
+        drawBar(item.n1, item.d1, 'bg-sky-400', 'Potion Tank Alpha', item.label1) +
+        drawBar(item.n2, item.d2, 'bg-emerald-400', 'Potion Tank Beta', item.label2);
       document.getElementById('fracQuestionText').textContent = item.q;
 
       const grid = document.getElementById('fracChoicesGrid');
       grid.innerHTML = '';
-      item.opts.forEach((opt) => {
+      shuffleArray(item.opts).forEach((opt) => {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'py-3 px-4 rounded-2xl bg-slate-800 hover:bg-emerald-400 hover:text-slate-950 border-2 border-slate-600 text-lg font-extrabold text-white game-font transition';
@@ -3318,9 +3622,12 @@
       renderQuestProblem();
     });
 
-    document.getElementById('questVerifyBtn').addEventListener('click', () => {
+    function verifyQuestAnswer() {
       const q = getActiveQuestObj();
-      const val = parseFloat(document.getElementById('questAnsInput').value);
+      const raw = document.getElementById('questAnsInput').value.trim();
+      if (raw === '') return;
+      const val = parseFloat(raw);
+      if (Number.isNaN(val)) return;
       if (val === q.ans) {
         grantRewards(40, 40, `Story Quest Conquered! The answer is ${q.ans}!`);
         unlockBadge('rainbow', 'Rainbow Story Quest & Fraction Badge');
@@ -3332,6 +3639,14 @@
         box.classList.remove('hidden');
         box.textContent = `🕵️‍♂️ Strategy Blueprint: ${q.stepHint}`;
         showBanner('🗺️', 'Check the 2-step blueprint revealed above and try again!', 'amber');
+      }
+    }
+
+    document.getElementById('questVerifyBtn').addEventListener('click', verifyQuestAnswer);
+    document.getElementById('questAnsInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        verifyQuestAnswer();
       }
     });
 
@@ -3349,29 +3664,67 @@
       prompt: '6 × 7 = ?',
       lanes: [42, 48, 36],
       correctLane: 0,
-      animId: null
+      animId: null,
+      lastTime: 0
     };
+
+    function pauseArcade() {
+      if (!arcade.running) return;
+      arcade.running = false;
+      arcade.lastTime = 0;
+      if (arcade.animId) {
+        cancelAnimationFrame(arcade.animId);
+        arcade.animId = null;
+      }
+      const btn = document.getElementById('arcadeStartToggleBtn');
+      if (btn) btn.textContent = '▶ Resume Volt-Runner';
+    }
 
     function spawnArcadeWave() {
       const q = generateMathProblem('multdiv');
       arcade.prompt = q.prompt;
       const ans = Number(q.answer);
-      const wrong = q.choices.filter((c) => Number(c) !== ans);
+      const wrong = shuffleArray(q.choices.map(Number).filter((c) => c !== ans));
       arcade.correctLane = randInt(0, 2);
+      const used = new Set([ans]);
       arcade.lanes = [0, 1, 2].map((laneIdx) => {
         if (laneIdx === arcade.correctLane) return ans;
-        return wrong.pop() || ans + (laneIdx + 2) * 3;
+        while (wrong.length > 0) {
+          const cand = wrong.pop();
+          if (!used.has(cand)) {
+            used.add(cand);
+            return cand;
+          }
+        }
+        let fallback = ans + (laneIdx + 2) * 3;
+        while (used.has(fallback)) fallback += 1;
+        used.add(fallback);
+        return fallback;
       });
-      arcade.gateX = arcadeCanvas.width - 60;
+      arcade.gateX = Math.max(260, arcadeCanvas.width - 60);
     }
 
     function resizeArcadeCanvas() {
       const rect = arcadeCanvas.parentElement.getBoundingClientRect();
-      arcadeCanvas.width = Math.max(320, rect.width);
-      arcadeCanvas.height = Math.max(250, rect.height);
+      arcadeCanvas.width = Math.max(320, Math.round(rect.width));
+      arcadeCanvas.height = Math.max(250, Math.round(rect.height));
       drawArcadeFrame();
     }
     window.addEventListener('resize', resizeArcadeCanvas);
+
+    function drawRoundedRectPath(ctx, x, y, w, h, r) {
+      if (typeof ctx.roundRect === 'function') {
+        ctx.roundRect(x, y, w, h, r);
+        return;
+      }
+      const radius = Math.min(r, w / 2, h / 2);
+      ctx.moveTo(x + radius, y);
+      ctx.arcTo(x + w, y, x + w, y + h, radius);
+      ctx.arcTo(x + w, y + h, x, y + h, radius);
+      ctx.arcTo(x, y + h, x, y, radius);
+      ctx.arcTo(x, y, x + w, y, radius);
+      ctx.closePath();
+    }
 
     function drawArcadeFrame() {
       const w = arcadeCanvas.width;
@@ -3413,7 +3766,7 @@
         arcadeCtx.strokeStyle = '#38bdf8';
         arcadeCtx.lineWidth = 3;
         arcadeCtx.beginPath();
-        arcadeCtx.roundRect(arcade.gateX - 36, gateY, 72, gateH, 12);
+        drawRoundedRectPath(arcadeCtx, arcade.gateX - 36, gateY, 72, gateH, 12);
         arcadeCtx.fill();
         arcadeCtx.stroke();
 
@@ -3434,14 +3787,19 @@
       arcadeCtx.stroke();
 
       arcadeCtx.font = '28px sans-serif';
-      arcadeCtx.fillText(pInfo.current.icon.slice(0, 2), 72, py + 2);
+      arcadeCtx.fillText(getIconGlyph(pInfo.current.icon, 1), 72, py + 2);
     }
 
-    function stepArcadeLoop() {
+    function stepArcadeLoop(timestamp) {
       if (!arcade.running) return;
-      arcade.gateX -= arcade.speed;
+      const now = typeof timestamp === 'number' ? timestamp : performance.now();
+      const dt = arcade.lastTime ? Math.min(0.05, Math.max(0.001, (now - arcade.lastTime) / 1000)) : 1 / 60;
+      arcade.lastTime = now;
 
-      if (arcade.gateX <= 95 && arcade.gateX >= 55) {
+      // Delta-time normalized so 60Hz, 120Hz, and 144Hz screens play at the same fair speed
+      arcade.gateX -= arcade.speed * 60 * dt;
+
+      if (arcade.gateX <= 95) {
         if (arcade.playerLane === arcade.correctLane) {
           arcade.gatesCleared += 1;
           arcade.speed = Math.min(4.2, 2.3 + arcade.gatesCleared * 0.2);
@@ -3456,8 +3814,6 @@
           showBanner('⚡', `Wrong Gate! Aim for ${arcade.lanes[arcade.correctLane]} to solve ${arcade.prompt}!`, 'amber');
           spawnArcadeWave();
         }
-      } else if (arcade.gateX < -40) {
-        spawnArcadeWave();
       }
 
       drawArcadeFrame();
@@ -3467,18 +3823,17 @@
     document.getElementById('arcadeStartToggleBtn').addEventListener('click', () => {
       const btn = document.getElementById('arcadeStartToggleBtn');
       if (arcade.running) {
-        arcade.running = false;
-        if (arcade.animId) cancelAnimationFrame(arcade.animId);
-        btn.textContent = '▶ Resume Volt-Runner';
+        pauseArcade();
       } else {
         resizeArcadeCanvas();
         if (arcade.gateX < 120 || arcade.gateX > arcadeCanvas.width) {
           spawnArcadeWave();
         }
         arcade.running = true;
+        arcade.lastTime = 0;
         btn.textContent = '⏸ Pause Volt-Runner';
         playSound('laser');
-        stepArcadeLoop();
+        arcade.animId = requestAnimationFrame(stepArcadeLoop);
       }
     });
 
@@ -3491,6 +3846,10 @@
 
     window.addEventListener('keydown', (e) => {
       if (state.activeTab !== 'arcade') return;
+      const modal = document.getElementById('hubModal');
+      if (modal && !modal.classList.contains('hidden')) return;
+      const tag = document.activeElement && document.activeElement.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
       if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
         e.preventDefault();
         arcade.playerLane = Math.max(0, arcade.playerLane - 1);
@@ -3537,6 +3896,9 @@
 
       POKEDEX_CREATURES.forEach((c) => {
         const isCaught = !!state.caughtIds[c.id];
+        const lockedLore = c.id === 'c16'
+          ? 'Earn all 5 Official Gym Badges to awaken Legendary Astralux!'
+          : 'Win Gym Arena battles or open a Mystery Capsule to catch!';
         const card = document.createElement('button');
         card.type = 'button';
         card.className = isCaught
@@ -3559,7 +3921,7 @@
           <div>
             <div class="text-base font-extrabold text-white">${isCaught ? c.displayName || c.name : 'Undiscovered'}</div>
             <p class="text-[11px] text-slate-300 mt-1 leading-snug">${
-              isCaught ? c.lore : 'Win Gym Arena battles or open a Mystery Capsule to catch!'
+              isCaught ? c.lore : lockedLore
             }</p>
           </div>
         `;
@@ -3567,6 +3929,8 @@
           if (isCaught) {
             speakText(`${c.displayName || c.name}. ${c.type} type. ${c.lore}`);
             playSound('attack');
+          } else if (c.id === 'c16') {
+            showBanner('🏅', 'Earn all 5 Official Gym Badges to awaken Legendary #016 Astralux!', 'amber');
           } else {
             showBanner('🔴', `Battle in Arena 1 or open a Mystery Capsule to discover ${c.dexNum}!`, 'amber');
           }
@@ -3576,9 +3940,13 @@
     }
 
     document.getElementById('buyMysteryCapsuleBtn').addEventListener('click', () => {
-      const uncaught = POKEDEX_CREATURES.filter((c) => !state.caughtIds[c.id]);
+      const uncaught = POKEDEX_CREATURES.filter((c) => c.id !== 'c16' && !state.caughtIds[c.id]);
       if (uncaught.length === 0) {
-        showBanner('👑', 'Incredible! Ozias has already caught all 16 creatures in the Living Pokédex!', 'amber');
+        if (!state.caughtIds.c16) {
+          showBanner('🏅', 'All 15 wild & capsule creatures caught! Earn all 5 Official Gym Badges to awaken Legendary #016 Astralux!', 'amber');
+        } else {
+          showBanner('👑', 'Incredible! Ozias has already caught all 16 creatures in the Living Pokédex!', 'amber');
+        }
         return;
       }
       if (state.coins < 100) {
@@ -3627,15 +3995,22 @@
       state.speedCaughtSession = 0;
       state.playerHp = 100;
       state.enemyHp = state.enemyMaxHp;
+      stopSpeedTimer(true);
+      pauseArcade();
       arcade.gatesCleared = 0;
+      arcade.speed = 2.3;
       document.getElementById('arcadeScorePill').textContent = 'Gates Cleared: 0 / 6';
+      spawnArcadeWave();
+      drawArcadeFrame();
+      clearScratchCanvas();
       saveState();
       updateHeaderAndHqUI();
+      renderWarmupOrbs();
       renderBattleArena();
       loadNextBattleQuestion();
       loadNextSpeedQuestion();
       playSound('attack');
-      showBanner('🔄', 'Daily Battle Streak Reset! (Ozias’s Pokédex, Coins, XP & Gym Badges are safely preserved!)', 'emerald');
+      showBanner('🔄', 'Daily Boards, Timers & Scratchpad Reset! (Ozias’s Pokédex, Coins, XP & Gym Badges are safely preserved!)', 'emerald');
     }
 
     document.getElementById('topResetDailyBtn').addEventListener('click', resetDailyBoardsOnly);
@@ -3651,22 +4026,68 @@
       generateAreaModelProblem();
       generateFractionProblem();
       renderQuestProblem();
+      spawnArcadeWave();
+      drawArcadeFrame();
       renderPokedexStage();
       renderSessionLogList();
       syncInlineFormAndTelemetry();
     }
 
+    const DEFAULT_SYNC_PLACEHOLDER = 'Live JSON sync snapshot...';
+    let fullResetArmed = false;
+    let fullResetArmTimer = null;
+
+    function resetSyncInputReadonly() {
+      const snapInput = document.getElementById('syncJsonSnapshotInput');
+      if (!snapInput) return;
+      snapInput.setAttribute('readonly', 'readonly');
+      snapInput.placeholder = DEFAULT_SYNC_PLACEHOLDER;
+    }
+
+    function disarmFullResetBtn() {
+      fullResetArmed = false;
+      if (fullResetArmTimer) {
+        clearTimeout(fullResetArmTimer);
+        fullResetArmTimer = null;
+      }
+      const btn = document.getElementById('fullResetProgressBtn');
+      if (btn) {
+        btn.textContent = 'Reset All Career Progress';
+        btn.className = 'text-xs text-rose-300 hover:underline font-bold';
+      }
+    }
+
     function openParentAndSyncModal() {
+      resetSyncInputReadonly();
+      disarmFullResetBtn();
       saveState();
       renderSessionLogList();
       document.getElementById('hubModal').classList.remove('hidden');
     }
 
+    function closeParentAndSyncModal() {
+      document.getElementById('hubModal').classList.add('hidden');
+      resetSyncInputReadonly();
+      disarmFullResetBtn();
+    }
+
     document.getElementById('openHubBtn').addEventListener('click', openParentAndSyncModal);
     document.getElementById('topSyncBtn').addEventListener('click', openParentAndSyncModal);
+    document.getElementById('closeHubModalBtn').addEventListener('click', closeParentAndSyncModal);
 
-    document.getElementById('closeHubModalBtn').addEventListener('click', () => {
-      document.getElementById('hubModal').classList.add('hidden');
+    document.getElementById('hubModal').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) {
+        closeParentAndSyncModal();
+      }
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const modal = document.getElementById('hubModal');
+        if (modal && !modal.classList.contains('hidden')) {
+          closeParentAndSyncModal();
+        }
+      }
     });
 
     document.getElementById('muteBtn').addEventListener('click', () => {
@@ -3675,28 +4096,78 @@
       if (state.muted && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel();
       }
+      saveState();
     });
 
     document.getElementById('forceResyncBtn').addEventListener('click', () => {
       loadSavedState();
       saveState();
-      updateHeaderAndHqUI();
-      renderPokedexStage();
-      renderSessionLogList();
+      refreshAllViews();
       playSound('attack');
       showBanner('💾', `Local Sync Verified at ${state.lastSavedAt}!`, 'emerald');
     });
 
-    // Download Self-Contained Updated HTML (Vinyl Vault Baker Pattern)
-    document.getElementById('downloadBakedHtmlBtn').addEventListener('click', () => {
+    function buildBakedHtmlDocument() {
       saveState();
       const payload = getSerializablePayload();
-      const serialized = JSON.stringify(payload);
-      let htmlSource = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-      htmlSource = htmlSource.replace(
-        /<script id="baked-state-script">[\s\S]*?<\/script>/,
-        `<script id="baked-state-script">\n    window.__OZIAS_POKEMATH_STATE__ = ${serialized};\n  <\/script>`
-      );
+      const serialized = JSON.stringify(payload).replace(/</g, '\\u003c');
+      const docClone = document.documentElement.cloneNode(true);
+
+      // Ensure exported HTML opens cleanly at League HQ with modal and feedback banners hidden
+      const modalClone = docClone.querySelector('#hubModal');
+      if (modalClone) modalClone.classList.add('hidden');
+      const bannerClone = docClone.querySelector('#feedbackBanner');
+      if (bannerClone) bannerClone.classList.add('hidden');
+
+      const snapClone = docClone.querySelector('#syncJsonSnapshotInput');
+      if (snapClone) {
+        snapClone.setAttribute('readonly', 'readonly');
+        snapClone.setAttribute('placeholder', DEFAULT_SYNC_PLACEHOLDER);
+        snapClone.removeAttribute('value');
+      }
+
+      const resetBtnClone = docClone.querySelector('#fullResetProgressBtn');
+      if (resetBtnClone) {
+        resetBtnClone.textContent = 'Reset All Career Progress';
+        resetBtnClone.className = 'text-xs text-rose-300 hover:underline font-bold';
+      }
+
+      // Normalize active tab back to League HQ so DOM matches initial state.activeTab = 'hq'
+      docClone.querySelectorAll('.stage-view').forEach((sec) => {
+        if (sec.id === 'view-hq') {
+          sec.classList.remove('hidden');
+        } else {
+          sec.classList.add('hidden');
+        }
+      });
+      docClone.querySelectorAll('.nav-tab').forEach((btn) => {
+        const isHq = btn.getAttribute('data-tab') === 'hq';
+        btn.className = isHq
+          ? 'nav-tab px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-amber-400 text-slate-950 shadow'
+          : 'nav-tab px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-slate-800/90 text-slate-200 hover:bg-slate-700';
+      });
+
+      // Strip Tailwind CDN runtime-injected <style> tags while preserving our static offline-fallback <style>
+      const headClone = docClone.querySelector('head');
+      if (headClone) {
+        headClone.querySelectorAll('style').forEach((styleEl) => {
+          if (!styleEl.textContent || styleEl.textContent.indexOf('.pokeball-gradient') === -1) {
+            styleEl.remove();
+          }
+        });
+      }
+
+      const bakedScriptClone = docClone.querySelector('#baked-state-script');
+      if (bakedScriptClone) {
+        bakedScriptClone.textContent = `\n    window.__OZIAS_POKEMATH_STATE__ = ${serialized};\n  `;
+      }
+
+      return '<!DOCTYPE html>\n' + docClone.outerHTML;
+    }
+
+    // Download Self-Contained Updated HTML (Vinyl Vault Baker Pattern)
+    document.getElementById('downloadBakedHtmlBtn').addEventListener('click', () => {
+      const htmlSource = buildBakedHtmlDocument();
       const blob = new Blob([htmlSource], { type: 'text/html;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -3735,13 +4206,11 @@
       reader.onload = (ev) => {
         try {
           const parsed = JSON.parse(ev.target.result);
-          applyPayloadToState(parsed);
+          if (!applyPayloadToState(parsed)) {
+            throw new Error('Invalid snapshot');
+          }
           saveState();
-          updateHeaderAndHqUI();
-          renderBattleArena();
-          renderPokedexStage();
-          renderMatrixBoard();
-          renderSessionLogList();
+          refreshAllViews();
           playSound('fanfare');
           spawnConfetti(50);
           showBanner('📥', 'Restored Ozias’s Pokédex, XP, Coins & Badges from JSON file!', 'emerald');
@@ -3751,21 +4220,31 @@
         }
       };
       reader.readAsText(file);
+      e.target.value = '';
     });
 
     // Copy & Paste Sync Snapshot
     document.getElementById('copySyncJsonBtn').addEventListener('click', () => {
+      resetSyncInputReadonly();
       saveState();
       const snapInput = document.getElementById('syncJsonSnapshotInput');
       snapInput.select();
+      const fallbackCopy = () => {
+        try {
+          snapInput.select();
+          document.execCommand('copy');
+        } catch (err) {
+          // Ignore clipboard errors in restricted contexts
+        }
+      };
       try {
         if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(snapInput.value);
+          Promise.resolve(navigator.clipboard.writeText(snapInput.value)).catch(fallbackCopy);
         } else {
-          document.execCommand('copy');
+          fallbackCopy();
         }
       } catch (e) {
-        document.execCommand('copy');
+        fallbackCopy();
       }
       playSound('attack');
       showBanner('📋', 'Copied Sync Code to clipboard!', 'emerald');
@@ -3781,15 +4260,15 @@
         return;
       }
       try {
-        const parsed = JSON.parse(snapInput.value.trim());
-        snapInput.setAttribute('readonly', 'readonly');
-        applyPayloadToState(parsed);
+        const raw = snapInput.value.trim();
+        if (!raw) throw new Error('Empty sync code');
+        const parsed = JSON.parse(raw);
+        if (!applyPayloadToState(parsed)) {
+          throw new Error('Invalid snapshot');
+        }
+        resetSyncInputReadonly();
         saveState();
-        updateHeaderAndHqUI();
-        renderBattleArena();
-        renderPokedexStage();
-        renderMatrixBoard();
-        renderSessionLogList();
+        refreshAllViews();
         playSound('fanfare');
         showBanner('📥', 'Restored progress from pasted Sync Code!', 'emerald');
       } catch (e) {
@@ -3798,24 +4277,43 @@
       }
     });
 
-    // Full Career Reset
+    // Full Career Reset (2-step confirmation to prevent accidental wipes)
     document.getElementById('fullResetProgressBtn').addEventListener('click', () => {
+      const btn = document.getElementById('fullResetProgressBtn');
+      if (!fullResetArmed) {
+        fullResetArmed = true;
+        btn.textContent = '⚠️ Click Again to Confirm Full Reset';
+        btn.className = 'text-xs px-2 py-0.5 rounded-lg bg-rose-600 text-white font-extrabold';
+        showBanner('⚠️', 'Click "Confirm Full Reset" again within 5 seconds to erase all Pokédex catches, XP, Coins & Badges.', 'rose');
+        fullResetArmTimer = setTimeout(disarmFullResetBtn, 5000);
+        return;
+      }
+      disarmFullResetBtn();
       state.coins = 0;
       state.xp = 0;
       state.streak = 0;
       state.oziasPoints = 0;
       state.momPoints = 0;
       state.battlesWon = 0;
+      state.speedBestScore = 0;
+      state.speedCaughtSession = 0;
+      state.playerHp = 100;
+      state.enemyIdx = 4;
+      state.enemyHp = 100;
+      state.enemyMaxHp = 100;
+      state.isBossBattle = false;
       state.badges = { boulder: false, cascade: false, thunder: false, rainbow: false, master: false };
       state.caughtIds = { c1: true, c2: true, c3: true, c4: true };
       state.masteredCells = {};
       Object.keys(state.sessionLog).forEach((k) => { state.sessionLog[k] = false; });
+      stopSpeedTimer(true);
+      pauseArcade();
+      arcade.gatesCleared = 0;
+      arcade.speed = 2.3;
+      document.getElementById('arcadeScorePill').textContent = 'Gates Cleared: 0 / 6';
+      clearScratchCanvas();
       saveState();
-      updateHeaderAndHqUI();
-      renderBattleArena();
-      renderPokedexStage();
-      renderMatrixBoard();
-      renderSessionLogList();
+      refreshAllViews();
       showBanner('🔄', 'Career Progress Reset for a brand-new League season!', 'amber');
     });
 
@@ -3824,6 +4322,7 @@
     // =====================================================
     window.addEventListener('load', () => {
       loadSavedState();
+      stopSpeedTimer(true);
       updateHeaderAndHqUI();
       renderWarmupOrbs();
       loadNextBattleQuestion();
