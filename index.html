@@ -449,6 +449,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ozias's PokéMath League: Multi-Grade Battle Arena &amp; Pokédex Quest!</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23f8fafc' stroke='%230f172a' stroke-width='4'/%3E%3Cpath d='M2 32 A30 30 0 0 1 62 32 Z' fill='%23ef4444' stroke='%230f172a' stroke-width='4'/%3E%3Cline x1='2' y1='32' x2='62' y2='32' stroke='%230f172a' stroke-width='5'/%3E%3Ccircle cx='32' cy='32' r='10' fill='%23f8fafc' stroke='%230f172a' stroke-width='4'/%3E%3Ccircle cx='32' cy='32' r='4' fill='%23facc15'/%3E%3C/svg%3E" />
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" />
   <style>
@@ -458,6 +459,7 @@
       color: #f8fafc;
       min-height: 100vh;
       overflow-x: hidden;
+      margin: 0;
     }
     h1, h2, h3, .game-font {
       font-family: 'Fredoka', 'Inter', sans-serif;
@@ -481,6 +483,16 @@
     }
     .sky-glow {
       box-shadow: 0 0 24px rgba(56, 189, 248, 0.35);
+    }
+    .cosmic-glow {
+      box-shadow: 0 0 28px rgba(34, 211, 238, 0.35), 0 0 14px rgba(168, 85, 247, 0.25);
+    }
+    @keyframes fusionPulse {
+      0%, 100% { box-shadow: 0 0 18px rgba(244, 114, 182, 0.35), 0 0 32px rgba(56, 189, 248, 0.25); transform: scale(1); }
+      50% { box-shadow: 0 0 30px rgba(250, 204, 21, 0.5), 0 0 44px rgba(168, 85, 247, 0.4); transform: scale(1.02); }
+    }
+    .fusion-reactor-ring {
+      animation: fusionPulse 2.8s ease-in-out infinite;
     }
     @keyframes popIn {
       0% { transform: scale(0.92); opacity: 0; }
@@ -511,23 +523,48 @@
     }
     /* Offline-First Core Fallback Styles (when opened as local .html without Wi-Fi) */
     .hidden { display: none !important; }
+    .fixed { position: fixed; }
+    .sticky { position: sticky; }
+    .relative { position: relative; }
+    .inset-0 { inset: 0; }
+    .top-0 { top: 0; }
+    .z-40 { z-index: 40; }
+    .z-50 { z-index: 50; }
+    .pointer-events-none { pointer-events: none; }
+    .overflow-hidden { overflow: hidden; }
+    .overflow-x-auto { overflow-x: auto; }
+    .overflow-y-auto { overflow-y: auto; }
+    .block { display: block; }
     .flex { display: flex; }
     .inline-flex { display: inline-flex; }
     .grid { display: grid; }
     .items-center { align-items: center; }
+    .items-start { align-items: flex-start; }
     .justify-between { justify-content: space-between; }
     .justify-center { justify-content: center; }
     .flex-wrap { flex-wrap: wrap; }
     .flex-col { flex-direction: column; }
+    .flex-1 { flex: 1 1 0%; }
+    .shrink-0 { flex-shrink: 0; }
     .gap-1 { gap: 0.25rem; }
     .gap-1\.5 { gap: 0.375rem; }
     .gap-2 { gap: 0.5rem; }
     .gap-2\.5 { gap: 0.625rem; }
     .gap-3 { gap: 0.75rem; }
     .gap-4 { gap: 1rem; }
+    .gap-5 { gap: 1.25rem; }
     .p-3 { padding: 0.75rem; }
     .p-4 { padding: 1rem; }
     .p-5 { padding: 1.25rem; }
+    .p-6 { padding: 1.5rem; }
+    .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+    .py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
+    .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+    .pt-5 { padding-top: 1.25rem; }
+    .pb-16 { padding-bottom: 4rem; }
+    .mb-4 { margin-bottom: 1rem; }
+    .mt-2 { margin-top: 0.5rem; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
     .rounded-xl { border-radius: 0.75rem; }
     .rounded-2xl { border-radius: 1rem; }
     .rounded-3xl { border-radius: 1.5rem; }
@@ -536,10 +573,32 @@
     .text-left { text-align: left; }
     .font-bold { font-weight: 700; }
     .font-extrabold { font-weight: 800; }
+    .whitespace-nowrap { white-space: nowrap; }
     .w-full { width: 100%; }
+    .h-full { height: 100%; }
+    .w-10 { width: 2.5rem; } .h-10 { height: 2.5rem; }
+    .w-11 { width: 2.75rem; } .h-11 { height: 2.75rem; }
+    .w-12 { width: 3rem; } .h-12 { height: 3rem; }
+    .w-14 { width: 3.5rem; } .h-14 { height: 3.5rem; }
+    .w-16 { width: 4rem; } .h-16 { height: 4rem; }
+    .w-20 { width: 5rem; } .h-20 { height: 5rem; }
+    .w-24 { width: 6rem; } .h-24 { height: 6rem; }
+    .h-56 { height: 14rem; }
+    .h-72 { height: 18rem; }
+    .aspect-square { aspect-ratio: 1 / 1; }
+    .max-w-3xl { max-width: 48rem; }
     .max-w-6xl { max-width: 72rem; margin-left: auto; margin-right: auto; }
-    button { cursor: pointer; color: inherit; background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(148, 163, 184, 0.3); }
-    input, select { color: #f8fafc; background: #0f172a; border: 1px solid #475569; border-radius: 0.5rem; padding: 0.35rem 0.6rem; }
+    .max-h-\[92vh\] { max-height: 92vh; }
+    .max-w-\[440px\] { max-width: 440px; }
+    .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    :where(.space-y-4 > :not([hidden]) ~ :not([hidden])) { margin-top: 1rem; }
+    :where(.space-y-5 > :not([hidden]) ~ :not([hidden])) { margin-top: 1.25rem; }
+    :where(header) { background: rgba(2, 6, 23, 0.94); border-bottom: 1px solid rgba(239, 68, 68, 0.35); }
+    :where(#hubModal) { background: rgba(2, 6, 23, 0.86); }
+    :where(button) { cursor: pointer; color: inherit; background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(148, 163, 184, 0.3); }
+    :where(input, select) { color: #f8fafc; background: #0f172a; border: 1px solid #475569; border-radius: 0.5rem; padding: 0.35rem 0.6rem; }
   </style>
   <!-- Baked-In Self-Contained State Snapshot (Vinyl Vault Portable Pattern) -->
   <script id="baked-state-script">
@@ -623,12 +682,12 @@
           </div>
         </div>
 
-        <!-- 5 Gym Badges -->
+        <!-- 6 Gym Badges -->
         <div class="flex items-center gap-1.5 bg-indigo-500/20 border border-indigo-400/50 rounded-xl px-2.5 py-1">
           <span class="text-base">🏅</span>
           <div class="leading-tight">
             <div class="text-[10px] uppercase tracking-wider text-indigo-200 font-semibold">Badges</div>
-            <div id="badgeDisplay" class="text-sm sm:text-base font-extrabold text-indigo-200 game-font">0 / 5</div>
+            <div id="badgeDisplay" class="text-sm sm:text-base font-extrabold text-indigo-200 game-font">0 / 6</div>
           </div>
         </div>
 
@@ -659,23 +718,26 @@
 
     <!-- Navigation Tabs -->
     <nav class="max-w-6xl mx-auto mt-2.5 flex items-center gap-1.5 overflow-x-auto pb-1">
-      <button type="button" data-tab="hq" class="nav-tab px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-amber-400 text-slate-950 shadow">
-        🎛️ 0. League HQ &amp; Grade Dial
+      <button type="button" data-tab="hq" class="nav-tab px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-amber-400 text-slate-950 shadow">
+        🎛️ 0. League HQ
       </button>
-      <button type="button" data-tab="battle" class="nav-tab px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-slate-800/90 text-slate-200 hover:bg-slate-700">
-        ⚔️ 1. Gym Battle Arena
+      <button type="button" data-tab="battle" class="nav-tab px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-slate-800/90 text-slate-200 hover:bg-slate-700">
+        ⚔️ 1. Battle Arena
       </button>
-      <button type="button" data-tab="speedcatch" class="nav-tab px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-slate-800/90 text-slate-200 hover:bg-slate-700">
-        🔴 2. Speed Catch &amp; 12×12 Dex
+      <button type="button" data-tab="speedcatch" class="nav-tab px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-slate-800/90 text-slate-200 hover:bg-slate-700">
+        🔴 2. Speed &amp; 12×12
       </button>
-      <button type="button" data-tab="proflab" class="nav-tab px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-slate-800/90 text-slate-200 hover:bg-slate-700">
-        🧪 3. Professor's Lab &amp; Quests
+      <button type="button" data-tab="proflab" class="nav-tab px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-slate-800/90 text-slate-200 hover:bg-slate-700">
+        🧪 3. Prof's Lab
       </button>
-      <button type="button" data-tab="arcade" class="nav-tab px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-slate-800/90 text-slate-200 hover:bg-slate-700">
-        🎮 4. Volt-Runner Arcade
+      <button type="button" data-tab="arcade" class="nav-tab px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-slate-800/90 text-slate-200 hover:bg-slate-700">
+        🎮 4. Volt-Runner
       </button>
-      <button type="button" data-tab="pokedex" class="nav-tab px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-slate-800/90 text-slate-200 hover:bg-slate-700">
-        📖 5. Living Pokédex (<span id="navDexCount">4/16</span>)
+      <button type="button" data-tab="pokedex" class="nav-tab px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-slate-800/90 text-slate-200 hover:bg-slate-700">
+        📖 5. Pokédex (<span id="navDexCount">4/18</span>)
+      </button>
+      <button type="button" data-tab="cosmic" class="nav-tab px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-slate-800/90 text-cyan-200 hover:bg-slate-700 border border-cyan-400/40">
+        🛸 6. Cosmic Radar &amp; Fusion ✨
       </button>
     </nav>
   </header>
@@ -692,14 +754,14 @@
       <button id="closeFeedbackBtn" type="button" class="text-xs px-2.5 py-1 rounded-lg bg-black/25 hover:bg-black/45">OK</button>
     </div>
 
-    <!-- 5/5 Grand Champion Banner (Unlocks when all 5 Gym Badges are earned) -->
+    <!-- Grand Champion Banner (Unlocks at 5/5 Core Gym Badges & upgrades at 6/6 Cosmic Grand Master!) -->
     <div id="grandChampionBanner" class="hidden mb-5 rounded-3xl p-5 bg-gradient-to-r from-red-500/30 via-amber-500/30 to-sky-500/30 border-2 border-amber-400 gold-glow flex flex-wrap items-center justify-between gap-4 animate-pop">
       <div class="flex items-center gap-3">
         <div class="text-4xl">🏆🐉👑</div>
         <div>
-          <div class="text-xs font-extrabold uppercase tracking-wider text-amber-300">All 5 PokéMath League Gym Badges Earned!</div>
-          <h2 class="text-xl sm:text-2xl font-extrabold text-white">Grand Master Ozias &amp; Mom Marisa Have Conquered the League!</h2>
-          <p class="text-xs sm:text-sm text-emerald-200">Legendary Astralux Unlocked in the Pokédex • Dial up to Grade 6+ Master League for Bonus Bosses!</p>
+          <div id="grandChampEyebrow" class="text-xs font-extrabold uppercase tracking-wider text-amber-300">All 5 Core PokéMath League Gym Badges Earned!</div>
+          <h2 id="grandChampTitle" class="text-xl sm:text-2xl font-extrabold text-white">Grand Master Ozias &amp; Mom Marisa Have Conquered the League!</h2>
+          <p id="grandChampSub" class="text-xs sm:text-sm text-emerald-200">Legendary Astralux Unlocked in the Pokédex • Explore Arena 6 for the Cosmic Badge &amp; Mythic Galaxion!</p>
         </div>
       </div>
       <button id="celebrateMasterBtn" type="button" class="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs sm:text-sm shadow">
@@ -799,9 +861,14 @@
           <div class="text-xs sm:text-sm text-slate-300">
             💡 <strong class="text-amber-300">Pro Trainer Tip:</strong> Fast answers (&lt; 8 seconds) land a <strong class="text-rose-300">CRITICAL HIT (1.5× Damage + Bonus Coins)</strong>, and using the <strong class="text-sky-300">Poké-Scanner Hint</strong> shows you visual arrays, fraction bars, or algebra balance scales without losing your streak!
           </div>
-          <button id="enterBattleArenaBtn" type="button" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-red-500 via-amber-400 to-yellow-400 hover:from-red-400 hover:to-yellow-300 text-slate-950 font-extrabold text-sm sm:text-base shadow-lg transition">
-            Enter Arena 1: Gym Battle Arena ⚔️ →
-          </button>
+          <div class="flex flex-wrap items-center gap-2.5">
+            <button id="enterBattleArenaBtn" type="button" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-red-500 via-amber-400 to-yellow-400 hover:from-red-400 hover:to-yellow-300 text-slate-950 font-extrabold text-sm sm:text-base shadow-lg transition">
+              Enter Arena 1: Gym Battle Arena ⚔️ →
+            </button>
+            <button id="enterCosmicArenaBtn" type="button" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-cyan-400 via-sky-400 to-purple-500 hover:from-cyan-300 hover:to-purple-400 text-slate-950 font-extrabold text-sm sm:text-base shadow-lg transition cosmic-glow">
+              NEW! Arena 6: Cosmic Radar &amp; Fusion 🛸 →
+            </button>
+          </div>
         </div>
       </div>
 
@@ -844,7 +911,7 @@
           <div class="flex items-center gap-2">
             <div class="bg-slate-900/90 border border-amber-400/40 rounded-2xl px-3.5 py-1.5 text-center">
               <div class="text-[10px] text-slate-400 uppercase font-bold">Creatures Caught</div>
-              <div id="battleCatchCount" class="text-base sm:text-lg font-extrabold text-amber-300 game-font">4 / 16</div>
+              <div id="battleCatchCount" class="text-base sm:text-lg font-extrabold text-amber-300 game-font">4 / 18</div>
             </div>
             <button id="spawnBossBtn" type="button" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-rose-600 hover:from-purple-500 hover:to-rose-500 text-white font-extrabold text-xs shadow transition">
               👑 Challenge Gym Boss!
@@ -986,7 +1053,7 @@
               </div>
               <div class="text-[11px] text-slate-400 flex items-center justify-between">
                 <span>Supports mouse, finger, or stylus</span>
-                <button id="skipBattleQuestionBtn" type="button" class="text-amber-300 hover:underline font-bold">New Question →</button>
+                <button id="skipBattleQuestionBtn" type="button" class="bg-transparent border-0 p-0 text-amber-300 hover:underline font-bold">New Question →</button>
               </div>
             </div>
 
@@ -994,7 +1061,7 @@
             <div class="bg-slate-900/90 border border-slate-700 rounded-3xl p-4 space-y-2">
               <div class="flex items-center justify-between">
                 <span class="text-xs font-extrabold uppercase tracking-wider text-amber-300">🔴 Recent Pokédex Catches</span>
-                <button id="jumpToDexBtn" type="button" class="text-xs text-sky-300 hover:underline font-bold">Open Full Dex →</button>
+                <button id="jumpToDexBtn" type="button" class="bg-transparent border-0 p-0 text-xs text-sky-300 hover:underline font-bold">Open Full Dex →</button>
               </div>
               <div id="recentCatchTray" class="flex items-center gap-2 overflow-x-auto py-1"></div>
             </div>
@@ -1333,7 +1400,7 @@
               📖 Ozias's Living Pokédex &amp; League Gym Badge Case!
             </h2>
             <p class="text-xs sm:text-sm text-slate-300">
-              Inspect every creature you've caught, check your 5 Official Gym Badges, or spend PokéCoins to unlock rare Mystery Capsules!
+              Inspect every creature you've caught, check your 6 Official Gym Badges, or spend PokéCoins to unlock rare Mystery Capsules!
             </p>
           </div>
           <button id="buyMysteryCapsuleBtn" type="button" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-amber-400 to-pink-500 hover:from-amber-300 hover:to-pink-400 text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg transition">
@@ -1341,21 +1408,253 @@
           </button>
         </div>
 
-        <!-- 5 Official Gym Badges Showcase -->
+        <!-- 6 Official Gym Badges Showcase -->
         <div class="bg-slate-900/90 border border-slate-700 rounded-3xl p-4 sm:p-5">
           <div class="text-xs font-extrabold uppercase tracking-wider text-amber-300 mb-3">
-            🏅 Official PokéMath League Gym Badge Case (Earn all 5 to Unlock Legendary Astralux!)
+            🏅 Official PokéMath League Gym Badge Case (Earn 5 Core Badges for Astralux • Earn Cosmic Badge for Galaxion!)
           </div>
-          <div id="gymBadgesGrid" class="grid grid-cols-1 sm:grid-cols-5 gap-3"></div>
+          <div id="gymBadgesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3"></div>
         </div>
 
-        <!-- 16-Creature Living Pokédex Grid -->
+        <!-- 18-Creature Living Pokédex Grid -->
         <div>
           <div class="flex items-center justify-between mb-3">
-            <h3 class="text-lg font-extrabold text-white">🔴 Living Pokédex Collection (<span id="dexHeaderRatio">4 / 16</span> Discovered)</h3>
+            <h3 class="text-lg font-extrabold text-white">🔴 Living Pokédex Collection (<span id="dexHeaderRatio">4 / 18</span> Discovered)</h3>
             <span class="text-xs text-slate-400">Tap any caught creature to hear its Pokédex Math Lore!</span>
           </div>
           <div id="pokedexCardsGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-3.5"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================
+         STAGE 6: COSMIC POKÉ-RADAR EXPEDITION & MEGA-FUSION FORGE
+         ========================================================== -->
+    <section id="view-cosmic" class="stage-view hidden space-y-5 animate-pop">
+      <div class="glass-card rounded-3xl p-5 sm:p-7 border-2 border-cyan-400/50 cosmic-glow space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-xs font-extrabold uppercase tracking-wider px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40">
+                Arena 6 • Secret Star-Chart Radar &amp; Equation Alchemy
+              </span>
+              <span id="cosmicStatsPill" class="text-xs font-extrabold px-3 py-1 rounded-full bg-purple-500/20 text-purple-200 border border-purple-400/40">
+                🛸 Expeditions: 0 • 🧬 Fusions: 0
+              </span>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">
+              🛸 Cosmic Poké-Radar &amp; Mega-Fusion Lab!
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Track secret cosmic signals across live <strong class="text-cyan-300">(X, Y) Coordinate Star-Charts</strong>, or fuse any two Pokédex creatures by crafting <strong class="text-pink-300">Energy Crystal Equations</strong> to unlock Mythic <strong class="text-amber-300">#017 Galaxion</strong> &amp; <strong class="text-pink-300">#018 Prismforge</strong>!
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" data-cosmic-sub="radar" class="cosmic-sub-btn px-4 py-2 rounded-xl text-xs font-extrabold bg-cyan-400 text-slate-950 transition shadow">
+              📡 1. Cosmic Coordinate Radar
+            </button>
+            <button type="button" data-cosmic-sub="fusion" class="cosmic-sub-btn px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-800 text-slate-200 hover:bg-slate-700 transition">
+              🧬 2. Mega-Fusion Forge
+            </button>
+          </div>
+        </div>
+
+        <!-- SUB-VIEW 6A: COSMIC COORDINATE RADAR EXPEDITION -->
+        <div id="cosmicSub-radar" class="space-y-4">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+            <!-- Left 7 Cols: Interactive Animated Radar Grid Canvas -->
+            <div class="lg:col-span-7 bg-slate-950/95 border-2 border-cyan-500/40 rounded-3xl p-4 space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+                <span id="radarGridModeBadge" class="font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40">
+                  📡 Quadrant I Grid (0 to 8)
+                </span>
+                <span id="radarHoverCoords" class="font-mono font-extrabold text-amber-300 bg-slate-900 px-3 py-1 rounded-xl border border-slate-700">
+                  Target Lock: ( — , — )
+                </span>
+              </div>
+
+              <div class="relative w-full max-w-[440px] aspect-square mx-auto rounded-2xl overflow-hidden border-2 border-cyan-500/35 bg-slate-950 shadow-inner">
+                <canvas id="radarCanvas" class="w-full h-full block cursor-crosshair touch-none"></canvas>
+              </div>
+
+              <div class="text-[11px] text-slate-400 flex flex-wrap items-center justify-between gap-2">
+                <span>🎯 Tap or click any glowing grid intersection to launch a Poké-Scan Ping!</span>
+                <span id="radarTurnTag" class="font-extrabold text-cyan-300">🧢 Ozias's Radar Scan</span>
+              </div>
+            </div>
+
+            <!-- Right 5 Cols: Transmission HUD & Manual Coordinate Launcher -->
+            <div class="lg:col-span-5 space-y-4">
+              <!-- 5-Signal Expedition Tracker -->
+              <div class="bg-slate-900/90 border border-cyan-400/35 rounded-3xl p-4 space-y-2.5">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-extrabold uppercase tracking-wider text-cyan-300">🌟 Star-Constellation Expedition</span>
+                  <span id="radarProgressText" class="text-xs font-extrabold text-amber-300">Signal 1 / 5</span>
+                </div>
+                <div id="radarStarsRow" class="grid grid-cols-5 gap-2"></div>
+                <p class="text-[11px] text-slate-300">
+                  Lock onto all 5 Cosmic Signals in one expedition to earn the <strong class="text-amber-300">🪐 Cosmic Badge</strong> &amp; awaken <strong class="text-cyan-300">#017 Galaxion</strong>!
+                </p>
+              </div>
+
+              <!-- Live Decoded Math Transmission -->
+              <div class="bg-slate-950/95 border-2 border-amber-400/50 rounded-3xl p-4 sm:p-5 space-y-3">
+                <div class="flex items-center justify-between gap-2 text-xs">
+                  <span id="radarMissionTopic" class="font-extrabold uppercase tracking-wider text-amber-300">📡 Lv.30 Star-Signal Decoding</span>
+                  <button id="speakRadarBtn" type="button" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-300 font-bold flex items-center gap-1">
+                    <span>🔊</span><span>Read</span>
+                  </button>
+                </div>
+
+                <div id="radarMissionPrompt" class="text-lg sm:text-xl font-extrabold text-white game-font leading-snug">
+                  Decode Signal: X = 3 × 2,  Y = 12 − 5
+                </div>
+
+                <div id="radarHintBox" class="hidden p-3 rounded-xl bg-sky-950/75 border border-sky-400/40 text-xs text-sky-200 leading-relaxed"></div>
+
+                <div id="radarEchoBox" class="p-3 rounded-xl bg-slate-900/90 border border-slate-700 text-xs font-bold text-cyan-200">
+                  📡 Radar Ready! Remember: X goes left/right (across), Y goes up/down!
+                </div>
+
+                <!-- Keyboard / Precision Coordinate Ping Bar -->
+                <div class="pt-2 border-t border-slate-800 space-y-2.5">
+                  <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Or Type Exact Coordinates (X, Y):</div>
+                  <div class="flex items-center gap-2">
+                    <label class="flex items-center gap-1 text-xs font-extrabold text-cyan-300">
+                      <span>X:</span>
+                      <input id="radarInputX" type="number" placeholder="X" class="w-16 px-2 py-1.5 rounded-xl bg-slate-900 border border-cyan-400/50 text-center font-extrabold text-white text-sm" />
+                    </label>
+                    <label class="flex items-center gap-1 text-xs font-extrabold text-amber-300">
+                      <span>Y:</span>
+                      <input id="radarInputY" type="number" placeholder="Y" class="w-16 px-2 py-1.5 rounded-xl bg-slate-900 border border-amber-400/50 text-center font-extrabold text-white text-sm" />
+                    </label>
+                    <button id="radarPingSubmitBtn" type="button" class="flex-1 px-3 py-2 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-extrabold text-xs transition shadow">
+                      📡 Ping!
+                    </button>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between gap-2 pt-1">
+                  <button id="radarHintBtn" type="button" class="px-3 py-1.5 rounded-xl bg-sky-500/20 hover:bg-sky-500/35 border border-sky-400/40 text-sky-300 text-xs font-extrabold transition">
+                    🔍 Poké-Scanner Hint
+                  </button>
+                  <button id="radarNewSignalBtn" type="button" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 transition">
+                    🎲 New Signal
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB-VIEW 6B: MEGA-FUSION EQUATION FORGE -->
+        <div id="cosmicSub-fusion" class="hidden space-y-5">
+          <!-- Partner Selection + Live Fusion Preview Reactor -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center bg-slate-900/90 border border-pink-400/35 rounded-3xl p-4 sm:p-5">
+            <!-- Partner Pickers (7 cols) -->
+            <div class="lg:col-span-7 space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <span class="text-xs font-extrabold uppercase tracking-wider text-pink-300">🧬 Step 1: Choose Any 2 Caught Creatures to Fuse!</span>
+                <button id="fusionRandomPairBtn" type="button" class="px-3 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 border border-pink-400/40 text-pink-200 text-xs font-extrabold transition">
+                  🎲 Random Hybrid Pair
+                </button>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="p-3 rounded-2xl bg-slate-950 border border-sky-400/40 space-y-2">
+                  <div class="flex items-center gap-2.5">
+                    <div id="fusionMiniSvgA" class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center"></div>
+                    <div class="flex-1 min-w-0">
+                      <label for="fusionSelectA" class="text-[10px] font-extrabold uppercase text-sky-300 block">Partner A</label>
+                      <select id="fusionSelectA" aria-label="Select First Fusion Creature" class="w-full mt-0.5 text-xs font-extrabold bg-slate-900 text-white rounded-lg px-2 py-1.5 border border-slate-700"></select>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-3 rounded-2xl bg-slate-950 border border-pink-400/40 space-y-2">
+                  <div class="flex items-center gap-2.5">
+                    <div id="fusionMiniSvgB" class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center"></div>
+                    <div class="flex-1 min-w-0">
+                      <label for="fusionSelectB" class="text-[10px] font-extrabold uppercase text-pink-300 block">Partner B</label>
+                      <select id="fusionSelectB" aria-label="Select Second Fusion Creature" class="w-full mt-0.5 text-xs font-extrabold bg-slate-900 text-white rounded-lg px-2 py-1.5 border border-slate-700"></select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p class="text-xs text-slate-300">
+                Tap a <strong class="text-amber-300">Crystal Number</strong> → pick an <strong class="text-cyan-300">Operator (+ − × ÷)</strong> → tap a second <strong class="text-amber-300">Crystal Number</strong> to merge them! Use ALL crystals to reach the exact <strong class="text-pink-300">Target Fusion Power</strong>!
+              </p>
+            </div>
+
+            <!-- Live Hybrid Creature Reactor Preview (5 cols) -->
+            <div class="lg:col-span-5 bg-slate-950/95 border-2 border-amber-400/50 rounded-3xl p-4 flex items-center gap-4 fusion-reactor-ring">
+              <div id="fusionPreviewSvg" class="w-24 h-24 rounded-2xl bg-gradient-to-br from-slate-900 to-indigo-950 border border-purple-400/50 flex items-center justify-center float-sprite shrink-0"></div>
+              <div class="flex-1 min-w-0">
+                <div class="text-[10px] font-extrabold uppercase tracking-wider text-pink-300">Live Mega-Fusion Blueprint</div>
+                <div id="fusionPreviewName" class="text-xl sm:text-2xl font-extrabold text-white game-font truncate">Voltrokit</div>
+                <div id="fusionPreviewTypes" class="text-xs text-cyan-300 font-bold truncate">⚡ Electric × 🔥 Fire</div>
+                <div class="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-400/20 border border-amber-400/60">
+                  <span class="text-xs font-extrabold uppercase text-amber-200">🎯 Target Power:</span>
+                  <span id="fusionTargetPower" class="text-xl font-extrabold text-amber-300 game-font">24</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Crystal Equation Forge Workbench -->
+          <div class="bg-slate-950/95 border-2 border-purple-500/45 rounded-3xl p-5 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <span id="fusionGradeTag" class="text-xs font-extrabold uppercase tracking-wider text-purple-300">⚡ Step 2: Combine All Energy Crystals to Match Target Power!</span>
+                <div id="fusionSelectionPrompt" class="text-xs sm:text-sm text-amber-200 font-bold mt-0.5">
+                  Tap your first Energy Crystal below!
+                </div>
+              </div>
+              <div class="flex flex-wrap items-center gap-1.5">
+                <button id="fusionUndoBtn" type="button" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-extrabold border border-slate-600 transition">
+                  ↩️ Undo
+                </button>
+                <button id="fusionResetBtn" type="button" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs font-extrabold border border-slate-600 transition">
+                  🔄 Reset Crystals
+                </button>
+                <button id="fusionHintBtn" type="button" class="px-3 py-1.5 rounded-xl bg-sky-500/20 hover:bg-sky-500/35 border border-sky-400/40 text-sky-300 text-xs font-extrabold transition">
+                  🔍 Step Hint
+                </button>
+                <button id="fusionNewPuzzleBtn" type="button" class="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-extrabold transition">
+                  🎲 New Blueprint
+                </button>
+              </div>
+            </div>
+
+            <!-- Glowing Energy Crystals Row -->
+            <div id="fusionCrystalsRow" class="flex flex-wrap items-center justify-center gap-3 py-2"></div>
+
+            <!-- Operator Energy Buttons -->
+            <div class="flex items-center justify-center gap-2.5 flex-wrap">
+              <button type="button" data-fop="+" class="fusion-op-btn w-14 h-12 rounded-2xl bg-slate-800 hover:bg-cyan-400 hover:text-slate-950 border-2 border-slate-600 text-2xl font-extrabold text-white game-font transition">+</button>
+              <button type="button" data-fop="-" class="fusion-op-btn w-14 h-12 rounded-2xl bg-slate-800 hover:bg-cyan-400 hover:text-slate-950 border-2 border-slate-600 text-2xl font-extrabold text-white game-font transition">−</button>
+              <button type="button" data-fop="*" class="fusion-op-btn w-14 h-12 rounded-2xl bg-slate-800 hover:bg-cyan-400 hover:text-slate-950 border-2 border-slate-600 text-2xl font-extrabold text-white game-font transition">×</button>
+              <button type="button" data-fop="/" class="fusion-op-btn w-14 h-12 rounded-2xl bg-slate-800 hover:bg-cyan-400 hover:text-slate-950 border-2 border-slate-600 text-2xl font-extrabold text-white game-font transition">÷</button>
+            </div>
+
+            <!-- Hint Box & Step Equation Log -->
+            <div id="fusionHintBox" class="hidden p-3 rounded-xl bg-sky-950/75 border border-sky-400/40 text-xs sm:text-sm text-sky-200 font-bold text-center"></div>
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3">
+              <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-1.5">⚡ Active Fusion Chain Log</div>
+              <div id="fusionStepsLog" class="flex flex-wrap items-center gap-2 text-xs font-mono text-emerald-300">
+                <span class="text-slate-500">No crystals merged yet — pick a crystal to begin!</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ozias's Forged Mega-Fusion Trophy Hall -->
+          <div class="bg-slate-900/90 border border-slate-700 rounded-3xl p-4 sm:p-5 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <h3 class="text-sm sm:text-base font-extrabold uppercase tracking-wider text-amber-300">
+                🏆 Ozias's Mega-Fusion Trophy Hall (<span id="fusionGalleryCount">0</span> Forged)
+              </h3>
+              <span class="text-xs text-slate-400">Forge 1 Fusion to awaken #018 Prismforge • Forge 3 for the Cosmic Badge!</span>
+            </div>
+            <div id="fusionGalleryGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -1377,6 +1676,15 @@
         </button>
       </div>
 
+      <!-- Inline Modal Feedback Toast (Always visible when Hub Modal is open) -->
+      <div id="hubModalFeedback" class="hidden rounded-2xl px-4 py-2.5 border text-xs sm:text-sm font-bold flex items-center justify-between gap-2 animate-pop">
+        <div class="flex items-center gap-2">
+          <span id="hubModalFeedbackEmoji" class="text-lg">💾</span>
+          <span id="hubModalFeedbackText">Synced!</span>
+        </div>
+        <button id="closeHubModalFeedbackBtn" type="button" class="text-xs px-2 py-0.5 rounded-lg bg-black/25 hover:bg-black/45">OK</button>
+      </div>
+
       <!-- Live Telemetry Cards -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
         <div class="p-3 rounded-2xl bg-slate-900/90 border border-amber-400/30">
@@ -1386,8 +1694,8 @@
         </div>
         <div class="p-3 rounded-2xl bg-slate-900/90 border border-emerald-400/30">
           <div class="text-[10px] font-bold uppercase text-emerald-300">Ozias's Career Stats</div>
-          <div id="hubTelemetryStats" class="text-sm font-extrabold text-white mt-0.5">0 Coins • 0 XP • 0/5 Badges</div>
-          <div id="hubTelemetryDex" class="text-[11px] text-slate-400 mt-0.5">4/16 Creatures Caught</div>
+          <div id="hubTelemetryStats" class="text-sm font-extrabold text-white mt-0.5">0 Coins • 0 XP • 0/6 Badges</div>
+          <div id="hubTelemetryDex" class="text-[11px] text-slate-400 mt-0.5">4/18 Creatures Caught</div>
         </div>
         <div class="p-3 rounded-2xl bg-slate-900/90 border border-sky-400/30">
           <div class="text-[10px] font-bold uppercase text-sky-300">Ozias &amp; Mom Co-Op Log</div>
@@ -1445,8 +1753,8 @@
         <div class="flex flex-wrap items-center justify-between gap-2">
           <h3 class="text-sm font-extrabold uppercase tracking-wider text-amber-300">🏆 Ozias &amp; Mom (Marisa) League Challenge Log</h3>
           <div class="flex items-center gap-3">
-            <button id="modalResetDailyBtn" type="button" class="text-xs text-amber-300 hover:underline font-bold">🔄 Reset Daily Streak Only</button>
-            <button id="fullResetProgressBtn" type="button" class="text-xs text-rose-300 hover:underline font-bold">Reset All Career Progress</button>
+            <button id="modalResetDailyBtn" type="button" class="bg-transparent border-0 p-0 text-xs text-amber-300 hover:underline font-bold">🔄 Reset Daily Streak Only</button>
+            <button id="fullResetProgressBtn" type="button" class="bg-transparent border-0 p-0 text-xs text-rose-300 hover:underline font-bold">Reset All Career Progress</button>
           </div>
         </div>
         <div id="sessionLogList" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm"></div>
@@ -1561,15 +1869,21 @@
       { id: 'c13', dexNum: '#013', name: 'Chronogear', type: '⏳ Steel/Time', rarity: 'Epic Gym Boss', color: '#fbbf24', lore: 'Synchronizes 60 seconds per minute and 3,600 seconds per hour without losing a beat!' },
       { id: 'c14', dexNum: '#014', name: 'Solarphoenix', type: '☀️ Fire/Flying', rarity: 'Epic Gym Boss', color: '#f97316', lore: 'Reborn from 100% decimal and percentage mastery in the Cascade Arena!' },
       { id: 'c15', dexNum: '#015', name: 'Nebulark', type: '🌌 Cosmic', rarity: 'Mythic Boss', color: '#a855f7', lore: 'Orbits distant stars using order of operations and algebraic expressions!' },
-      { id: 'c16', dexNum: '#016', name: 'Astralux', type: '👑 Legendary', rarity: 'Grand Champion', color: '#fde047', lore: 'The Legendary Math Guardian! Awakens when Ozias & Marisa unlock all 5 League Gym Badges!' }
+      { id: 'c16', dexNum: '#016', name: 'Astralux', type: '👑 Legendary', rarity: 'Grand Champion', color: '#fde047', lore: 'The Legendary Math Guardian! Awakens when Ozias & Marisa unlock all 5 Core League Gym Badges!' },
+      { id: 'c17', dexNum: '#017', name: 'Galaxion', type: '🌌 Cosmic/Dragon', rarity: 'Mythic Navigator', color: '#38bdf8', lore: 'Charts secret star-constellations across all four coordinate quadrants using glowing radar vectors!' },
+      { id: 'c18', dexNum: '#018', name: 'Prismforge', type: '💎 Prism/Fusion', rarity: 'Mythic Alchemist', color: '#f472b6', lore: 'Fuses Energy Crystal equations to unite any two PokéMath partners into a dazzling Mega-Fusion!' }
     ];
+
+    const CORE_BADGE_KEYS = ['boulder', 'cascade', 'thunder', 'rainbow', 'master'];
+    const SPECIAL_MYTHIC_IDS = ['c16', 'c17', 'c18'];
 
     const GYM_BADGE_DEFS = [
       { key: 'boulder', name: '1. Boulder Badge', icon: '🪨', desc: 'Win 3 Gym Arena Battles at any Grade Level!' },
       { key: 'cascade', name: '2. Cascade Badge', icon: '🌊', desc: 'Catch 10+ Speed-Catch targets OR light 12 cells on the 12×12 Grid!' },
       { key: 'thunder', name: '3. Thunder Badge', icon: '⚡', desc: 'Complete a Mega-Evolution Area Split in Professor’s Lab!' },
       { key: 'rainbow', name: '4. Rainbow Badge', icon: '🌈', desc: 'Solve a Fraction Reactor puzzle OR Ozias & Marisa Story Quest!' },
-      { key: 'master', name: '5. Master Dragon Badge', icon: '🐉', desc: 'Clear 6 Math Gates in the Volt-Runner Arcade Mini-Game!' }
+      { key: 'master', name: '5. Master Dragon Badge', icon: '🐉', desc: 'Clear 6 Math Gates in the Volt-Runner Arcade Mini-Game!' },
+      { key: 'cosmic', name: '6. Cosmic Badge', icon: '🪐', desc: 'Finish a 5-Signal Cosmic Radar Expedition OR Forge 3 Mega-Fusions in Arena 6!' }
     ];
 
     const LOG_ITEMS = [
@@ -1578,7 +1892,8 @@
       { key: 'log3', label: 'Session 3: Dialed Up to 4th Grade Cascade League!' },
       { key: 'log4', label: 'Session 4: Mega-Split Area Models & Fraction Reactor' },
       { key: 'log5', label: 'Session 5: Dialed Up to 5th/6th Grade Challenger Mode!' },
-      { key: 'log6', label: 'Session 6: Volt-Runner Arcade & Boss Battle Victory' }
+      { key: 'log6', label: 'Session 6: Volt-Runner Arcade & Boss Battle Victory' },
+      { key: 'log7', label: 'Session 7: Arena 6 Cosmic Radar Expedition & Mega-Fusion Forge!' }
     ];
 
     // Unicode-safe emoji glyph extractor (avoids splitting surrogate pairs like '⚡🐭')
@@ -1599,6 +1914,10 @@
       return copy;
     }
 
+    function getCreatureById(id) {
+      return POKEDEX_CREATURES.find((c) => c.id === id) || POKEDEX_CREATURES[0];
+    }
+
     // Custom SVG Creature Renderer
     function renderCreatureSvg(creatureId, accentColor = '#facc15', sizeClass = 'w-14 h-14') {
       const shapeByKey = {
@@ -1606,7 +1925,9 @@
         pyrokit: 1, c2: 1, c6: 1, c7: 1, c11: 1, c12: 1,
         aquafin: 2, c3: 2, c5: 2, c9: 2, c13: 2,
         leafsprout: 3, c4: 3,
-        c10: 4, c14: 4, c15: 4, c16: 4
+        c10: 4, c14: 4, c15: 4, c16: 4,
+        c17: 5,
+        c18: 6
       };
       const key = String(creatureId || '').toLowerCase();
       const shapes = [
@@ -1646,6 +1967,26 @@
           <polygon points="40,6 49,26 71,29 55,44 59,66 40,55 21,66 25,44 9,29 31,26" fill="${accentColor}" stroke="#ffffff" stroke-width="3"/>
           <circle cx="33" cy="38" r="3.8" fill="#0f172a"/><circle cx="47" cy="38" r="3.8" fill="#0f172a"/>
           <path d="M 35 47 Q 40 52 45 47" stroke="#0f172a" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+        </svg>`,
+        // 5: Mythic Ringed Star-Dragon (Galaxion)
+        `<svg viewBox="0 0 80 80" class="${sizeClass}">
+          <ellipse cx="40" cy="44" rx="34" ry="12" transform="rotate(-18 40 44)" fill="none" stroke="#fde047" stroke-width="3" stroke-dasharray="6 3"/>
+          <circle cx="40" cy="42" r="21" fill="${accentColor}" stroke="#ffffff" stroke-width="3"/>
+          <polygon points="24,25 14,8 33,20" fill="#a855f7" stroke="#ffffff" stroke-width="2.2"/>
+          <polygon points="56,25 66,8 47,20" fill="#a855f7" stroke="#ffffff" stroke-width="2.2"/>
+          <circle cx="32" cy="39" r="4" fill="#0f172a"/><circle cx="48" cy="39" r="4" fill="#0f172a"/>
+          <circle cx="33" cy="37.5" r="1.6" fill="#fde047"/><circle cx="49" cy="37.5" r="1.6" fill="#fde047"/>
+          <path d="M 34 49 Q 40 54 46 49" stroke="#0f172a" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+          <circle cx="67" cy="27" r="3.5" fill="#fde047"/>
+        </svg>`,
+        // 6: Radiant Prism Alchemist (Prismforge)
+        `<svg viewBox="0 0 80 80" class="${sizeClass}">
+          <polygon points="40,6 68,36 40,74 12,36" fill="${accentColor}" stroke="#ffffff" stroke-width="3"/>
+          <polygon points="40,14 57,36 40,62 23,36" fill="#38bdf8" opacity="0.45"/>
+          <circle cx="32" cy="38" r="3.8" fill="#0f172a"/><circle cx="48" cy="38" r="3.8" fill="#0f172a"/>
+          <circle cx="33" cy="36.5" r="1.4" fill="#ffffff"/><circle cx="49" cy="36.5" r="1.4" fill="#ffffff"/>
+          <path d="M 34 48 Q 40 53 46 48" stroke="#0f172a" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+          <circle cx="14" cy="18" r="3" fill="#fde047"/><circle cx="66" cy="18" r="3" fill="#38bdf8"/>
         </svg>`
       ];
       if (Object.prototype.hasOwnProperty.call(shapeByKey, key)) {
@@ -1653,6 +1994,44 @@
       }
       const numIdx = parseInt(key.replace(/\D/g, ''), 10) || 1;
       return shapes[(numIdx - 1) % shapes.length];
+    }
+
+    // Dynamic Mega-Fusion Hybrid Name & Custom Twin-Gradient SVG Renderer
+    let fusionGradSeq = 0;
+    function getFusionName(nameA, nameB) {
+      const a = String(nameA || 'Voltchu');
+      const b = String(nameB || 'Pyrokit');
+      if (a === b) return `Mega-${a}`;
+      const cutA = Math.max(3, Math.ceil(a.length * 0.52));
+      const cutB = Math.max(2, Math.floor(b.length * 0.45));
+      return a.slice(0, cutA) + b.slice(cutB).toLowerCase();
+    }
+
+    function renderFusionSvg(creatureA, creatureB, sizeClass = 'w-20 h-20') {
+      const cA = creatureA || POKEDEX_CREATURES[0];
+      const cB = creatureB || POKEDEX_CREATURES[1];
+      const gid = `fgrad_${++fusionGradSeq}`;
+      const colA = cA.color || '#facc15';
+      const colB = cB.color || '#f472b6';
+      return `<svg viewBox="0 0 96 96" class="${sizeClass}">
+        <defs>
+          <linearGradient id="${gid}" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="${colA}"/>
+            <stop offset="100%" stop-color="${colB}"/>
+          </linearGradient>
+        </defs>
+        <circle cx="48" cy="48" r="42" fill="none" stroke="${colB}" stroke-width="2" stroke-dasharray="6 4" opacity="0.75"/>
+        <polygon points="48,6 56,22 74,16 66,34 84,48 66,62 74,80 56,74 48,90 40,74 22,80 30,62 12,48 30,34 22,16 40,22" fill="${colB}" opacity="0.32"/>
+        <polygon points="28,30 16,10 38,24" fill="${colA}" stroke="#ffffff" stroke-width="2.5"/>
+        <polygon points="68,30 80,10 58,24" fill="${colB}" stroke="#ffffff" stroke-width="2.5"/>
+        <circle cx="48" cy="50" r="24" fill="url(#${gid})" stroke="#ffffff" stroke-width="3"/>
+        <polygon points="48,20 53,30 43,30" fill="#fde047" stroke="#ffffff" stroke-width="1.8"/>
+        <circle cx="39" cy="47" r="4.2" fill="#0f172a"/><circle cx="57" cy="47" r="4.2" fill="#0f172a"/>
+        <circle cx="40.3" cy="45.5" r="1.6" fill="#ffffff"/><circle cx="58.3" cy="45.5" r="1.6" fill="#ffffff"/>
+        <circle cx="31" cy="54" r="4" fill="${colB}" opacity="0.9"/><circle cx="65" cy="54" r="4" fill="${colA}" opacity="0.9"/>
+        <path d="M 41 57 Q 48 63 55 57" stroke="#0f172a" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <circle cx="16" cy="24" r="3" fill="#fde047"/><circle cx="80" cy="72" r="3" fill="#38bdf8"/>
+      </svg>`;
     }
 
     // =====================================================
@@ -1674,7 +2053,7 @@
       streak: 0,
       muted: false,
       activeTab: 'hq',
-      badges: { boulder: false, cascade: false, thunder: false, rainbow: false, master: false },
+      badges: { boulder: false, cascade: false, thunder: false, rainbow: false, master: false, cosmic: false },
       caughtIds: { c1: true, c2: true, c3: true, c4: true },
       battlesWon: 0,
       // Battle state
@@ -1698,8 +2077,13 @@
       activeAreaProb: { a: 14, b: 6, tenPart: 10, onePart: 4 },
       activeFracProb: null,
       questIdx: 0,
+      // Arena 6: Cosmic Radar & Mega-Fusion Forge
+      cosmicSubMode: 'radar',
+      radarMissionsWon: 0,
+      fusionsForged: 0,
+      fusionGallery: [], // Compact tuples: [idA, idB, targetPower] (max 8)
       // Session Log
-      sessionLog: { log1: false, log2: false, log3: false, log4: false, log5: false, log6: false }
+      sessionLog: { log1: false, log2: false, log3: false, log4: false, log5: false, log6: false, log7: false }
     };
 
     function getEffectiveNumericGrade() {
@@ -1714,7 +2098,7 @@
 
     function getSerializablePayload() {
       return {
-        version: '2026-11-16_ozias_pokemath_v1',
+        version: '2026-11-19_ozias_pokemath_v2',
         lastSavedAt: state.lastSavedAt || new Date().toLocaleTimeString(),
         savedAtMs: state.savedAtMs || 0,
         gradeMode: state.gradeMode,
@@ -1729,27 +2113,32 @@
         badges: { ...state.badges },
         caughtIds: { ...state.caughtIds },
         battlesWon: state.battlesWon,
+        enemyIdx: state.enemyIdx,
         speedBestScore: state.speedBestScore,
         masteredCells: { ...state.masteredCells },
+        radarMissionsWon: state.radarMissionsWon,
+        fusionsForged: state.fusionsForged,
+        fusionGallery: state.fusionGallery.slice(0, 8),
         sessionLog: { ...state.sessionLog }
       };
     }
 
     function applyPayloadToState(parsed) {
       if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return false;
+      const validCreatureIds = new Set(POKEDEX_CREATURES.map((c) => c.id));
       if (parsed.gradeMode && GRADE_TIERS[parsed.gradeMode]) state.gradeMode = parsed.gradeMode;
       if (parsed.starterId && STARTER_LINES[parsed.starterId]) state.starterId = parsed.starterId;
       if (typeof parsed.coopMode === 'boolean') state.coopMode = parsed.coopMode;
       if (typeof parsed.muted === 'boolean') state.muted = parsed.muted;
-      if (typeof parsed.oziasPoints === 'number' && Number.isFinite(parsed.oziasPoints)) state.oziasPoints = parsed.oziasPoints;
-      if (typeof parsed.momPoints === 'number' && Number.isFinite(parsed.momPoints)) state.momPoints = parsed.momPoints;
-      if (typeof parsed.coins === 'number' && Number.isFinite(parsed.coins)) state.coins = parsed.coins;
-      if (typeof parsed.xp === 'number' && Number.isFinite(parsed.xp)) state.xp = parsed.xp;
-      if (typeof parsed.streak === 'number' && Number.isFinite(parsed.streak)) state.streak = parsed.streak;
+      if (typeof parsed.oziasPoints === 'number' && Number.isFinite(parsed.oziasPoints)) state.oziasPoints = Math.max(0, parsed.oziasPoints);
+      if (typeof parsed.momPoints === 'number' && Number.isFinite(parsed.momPoints)) state.momPoints = Math.max(0, parsed.momPoints);
+      if (typeof parsed.coins === 'number' && Number.isFinite(parsed.coins)) state.coins = Math.max(0, parsed.coins);
+      if (typeof parsed.xp === 'number' && Number.isFinite(parsed.xp)) state.xp = Math.max(0, parsed.xp);
+      if (typeof parsed.streak === 'number' && Number.isFinite(parsed.streak)) state.streak = Math.max(0, parsed.streak);
       if (parsed.lastSavedAt) state.lastSavedAt = parsed.lastSavedAt;
-      if (typeof parsed.savedAtMs === 'number' && Number.isFinite(parsed.savedAtMs)) state.savedAtMs = parsed.savedAtMs;
+      if (typeof parsed.savedAtMs === 'number' && Number.isFinite(parsed.savedAtMs)) state.savedAtMs = Math.max(0, parsed.savedAtMs);
       if (parsed.badges && typeof parsed.badges === 'object') {
-        state.badges = { boulder: false, cascade: false, thunder: false, rainbow: false, master: false };
+        state.badges = { boulder: false, cascade: false, thunder: false, rainbow: false, master: false, cosmic: false };
         Object.keys(state.badges).forEach((k) => {
           if (typeof parsed.badges[k] === 'boolean') state.badges[k] = parsed.badges[k];
         });
@@ -1757,19 +2146,35 @@
       if (parsed.caughtIds && typeof parsed.caughtIds === 'object') {
         state.caughtIds = { c1: true, c2: true, c3: true, c4: true };
         Object.keys(parsed.caughtIds).forEach((k) => {
-          if (parsed.caughtIds[k]) state.caughtIds[k] = true;
+          if (parsed.caughtIds[k] && validCreatureIds.has(k)) state.caughtIds[k] = true;
         });
       }
-      if (typeof parsed.battlesWon === 'number' && Number.isFinite(parsed.battlesWon)) state.battlesWon = parsed.battlesWon;
-      if (typeof parsed.speedBestScore === 'number' && Number.isFinite(parsed.speedBestScore)) state.speedBestScore = parsed.speedBestScore;
+      if (typeof parsed.battlesWon === 'number' && Number.isFinite(parsed.battlesWon)) state.battlesWon = Math.max(0, parsed.battlesWon);
+      if (typeof parsed.enemyIdx === 'number' && Number.isFinite(parsed.enemyIdx)) {
+        const idx = Math.floor(parsed.enemyIdx);
+        if (idx >= 4 && idx <= 14) state.enemyIdx = idx;
+      }
+      if (typeof parsed.speedBestScore === 'number' && Number.isFinite(parsed.speedBestScore)) state.speedBestScore = Math.max(0, parsed.speedBestScore);
       if (parsed.masteredCells && typeof parsed.masteredCells === 'object') {
         state.masteredCells = {};
         Object.keys(parsed.masteredCells).forEach((k) => {
-          if (parsed.masteredCells[k]) state.masteredCells[k] = true;
+          if (parsed.masteredCells[k] && /^\d{1,2}x\d{1,2}$/.test(k)) state.masteredCells[k] = true;
         });
       }
+      if (typeof parsed.radarMissionsWon === 'number' && Number.isFinite(parsed.radarMissionsWon)) {
+        state.radarMissionsWon = Math.max(0, parsed.radarMissionsWon);
+      }
+      if (typeof parsed.fusionsForged === 'number' && Number.isFinite(parsed.fusionsForged)) {
+        state.fusionsForged = Math.max(0, parsed.fusionsForged);
+      }
+      if (Array.isArray(parsed.fusionGallery)) {
+        state.fusionGallery = parsed.fusionGallery
+          .filter((entry) => Array.isArray(entry) && entry.length >= 3 && validCreatureIds.has(entry[0]) && validCreatureIds.has(entry[1]) && Number.isFinite(Number(entry[2])))
+          .slice(0, 8)
+          .map((entry) => [entry[0], entry[1], Number(entry[2])]);
+      }
       if (parsed.sessionLog && typeof parsed.sessionLog === 'object') {
-        state.sessionLog = { log1: false, log2: false, log3: false, log4: false, log5: false, log6: false };
+        state.sessionLog = { log1: false, log2: false, log3: false, log4: false, log5: false, log6: false, log7: false };
         Object.keys(state.sessionLog).forEach((k) => {
           if (typeof parsed.sessionLog[k] === 'boolean') state.sessionLog[k] = parsed.sessionLog[k];
         });
@@ -1788,7 +2193,8 @@
       const cells = p.masteredCells && typeof p.masteredCells === 'object'
         ? Object.keys(p.masteredCells).filter((k) => p.masteredCells[k]).length
         : 0;
-      return (Number(p.xp) || 0) + (Number(p.coins) || 0) + caught * 100 + badges * 200 + cells * 15;
+      const cosmic = (Number(p.radarMissionsWon) || 0) * 80 + (Number(p.fusionsForged) || 0) * 60;
+      return (Number(p.xp) || 0) + (Number(p.coins) || 0) + caught * 100 + badges * 200 + cells * 15 + cosmic;
     }
 
     function syncInlineFormAndTelemetry() {
@@ -1847,8 +2253,8 @@
       const lEl = document.getElementById('hubTelemetryLogCount');
       const tEl = document.getElementById('hubTelemetrySyncTime');
       if (gEl) gEl.textContent = tier.shortLabel;
-      if (sEl) sEl.textContent = `${state.coins} Coins • ${state.xp} XP • ${badgeCount}/5 Badges`;
-      if (dEl) dEl.textContent = `${caughtCount} / ${POKEDEX_CREATURES.length} Creatures • ${masteredCount}/144 Grid`;
+      if (sEl) sEl.textContent = `${state.coins} Coins • ${state.xp} XP • ${badgeCount}/${GYM_BADGE_DEFS.length} Badges`;
+      if (dEl) dEl.textContent = `${caughtCount} / ${POKEDEX_CREATURES.length} Creatures • ${masteredCount}/144 Grid • ${state.fusionsForged} Fusions`;
       if (lEl) lEl.textContent = `${logCount} / ${LOG_ITEMS.length} Sessions Signed Off`;
       if (tEl) tEl.textContent = state.lastSavedAt ? `Last local sync: ${state.lastSavedAt}` : 'Auto-synced to browser & inline form';
     }
@@ -1977,6 +2383,33 @@
             osc.start(now + i * 0.085);
             osc.stop(now + i * 0.085 + 0.32);
           });
+        } else if (type === 'radar') {
+          [987.77, 1318.5].forEach((freq, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + i * 0.09);
+            gain.gain.setValueAtTime(0.16, now + i * 0.09);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.09 + 0.28);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + i * 0.09);
+            osc.stop(now + i * 0.09 + 0.28);
+          });
+        } else if (type === 'fusion') {
+          const notes = [392.0, 523.25, 659.25, 783.99, 1046.5, 1567.98];
+          notes.forEach((freq, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = i % 2 === 0 ? 'triangle' : 'sine';
+            osc.frequency.setValueAtTime(freq, now + i * 0.07);
+            gain.gain.setValueAtTime(0.16, now + i * 0.07);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.07 + 0.4);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + i * 0.07);
+            osc.stop(now + i * 0.07 + 0.4);
+          });
         } else if (type === 'laser') {
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
@@ -2007,6 +2440,24 @@
       }
     }
 
+    function formatMathTextForSpeech(text) {
+      return String(text || '')
+        .replace(/\?\s*\/\s*(\d+)/g, 'what over $1')
+        .replace(/(\d+)\s*\/\s*(\d+)/g, '$1 over $2')
+        .replace(/(\d+)\s*:\s*(\d+)/g, '$1 to $2')
+        .replace(/=\s*\?/g, ' equals what')
+        .replace(/\bsq\s*m\b/gi, 'square meters')
+        .replace(/×/g, ' times ')
+        .replace(/÷/g, ' divided by ')
+        .replace(/−/g, ' minus ')
+        .replace(/²/g, ' squared')
+        .replace(/³/g, ' cubed')
+        .replace(/⁴/g, ' to the 4th power')
+        .replace(/⁵/g, ' to the 5th power')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
     function speakText(text) {
       if (state.muted || !text) return;
       try {
@@ -2014,14 +2465,7 @@
           window.speechSynthesis.cancel();
           setTimeout(() => {
             try {
-              const spoken = String(text)
-                .replace(/×/g, ' times ')
-                .replace(/÷/g, ' divided by ')
-                .replace(/−/g, ' minus ')
-                .replace(/²/g, ' squared')
-                .replace(/³/g, ' cubed')
-                .replace(/⁴/g, ' to the 4th power')
-                .replace(/⁵/g, ' to the 5th power');
+              const spoken = formatMathTextForSpeech(text);
               const utter = new SpeechSynthesisUtterance(spoken);
               utter.lang = 'en-US';
               utter.rate = 0.96;
@@ -2055,7 +2499,7 @@
     resizeFxCanvas();
 
     function spawnConfetti(count = 45) {
-      const colors = ['#facc15', '#ef4444', '#38bdf8', '#34d399', '#a855f7', '#fb923c'];
+      const colors = ['#facc15', '#ef4444', '#38bdf8', '#34d399', '#a855f7', '#fb923c', '#f472b6'];
       for (let i = 0; i < count; i++) {
         particles.push({
           x: window.innerWidth * (0.25 + Math.random() * 0.5),
@@ -2098,21 +2542,33 @@
     }
 
     function showBanner(emoji, message, tone = 'emerald') {
+      const toneCls = tone === 'emerald'
+        ? 'bg-emerald-500/20 border-emerald-400/50 text-emerald-200'
+        : tone === 'amber'
+        ? 'bg-amber-500/20 border-amber-400/50 text-amber-200'
+        : 'bg-rose-500/20 border-rose-400/50 text-rose-200';
+
       const banner = document.getElementById('feedbackBanner');
       document.getElementById('feedbackEmoji').textContent = emoji;
       document.getElementById('feedbackText').textContent = message;
-      banner.className = 'mb-4 rounded-2xl px-4 py-3 border text-sm sm:text-base font-bold flex items-center justify-between gap-3 animate-pop ';
-      if (tone === 'emerald') {
-        banner.className += 'bg-emerald-500/20 border-emerald-400/50 text-emerald-200';
-      } else if (tone === 'amber') {
-        banner.className += 'bg-amber-500/20 border-amber-400/50 text-amber-200';
-      } else {
-        banner.className += 'bg-rose-500/20 border-rose-400/50 text-rose-200';
+      banner.className = `mb-4 rounded-2xl px-4 py-3 border text-sm sm:text-base font-bold flex items-center justify-between gap-3 animate-pop ${toneCls}`;
+
+      // Also mirror feedback directly inside #hubModal whenever the modal is open
+      const modal = document.getElementById('hubModal');
+      const modalToast = document.getElementById('hubModalFeedback');
+      if (modal && modalToast && !modal.classList.contains('hidden')) {
+        document.getElementById('hubModalFeedbackEmoji').textContent = emoji;
+        document.getElementById('hubModalFeedbackText').textContent = message;
+        modalToast.className = `rounded-2xl px-4 py-2.5 border text-xs sm:text-sm font-bold flex items-center justify-between gap-2 animate-pop ${toneCls}`;
       }
     }
 
     document.getElementById('closeFeedbackBtn').addEventListener('click', () => {
       document.getElementById('feedbackBanner').classList.add('hidden');
+    });
+
+    document.getElementById('closeHubModalFeedbackBtn').addEventListener('click', () => {
+      document.getElementById('hubModalFeedback').classList.add('hidden');
     });
 
     document.getElementById('celebrateMasterBtn').addEventListener('click', () => {
@@ -2160,34 +2616,54 @@
         playSound('fanfare');
         spawnConfetti(80);
         showBanner('✨', `WHAT?! Your partner evolved into ${afterStage}! (${reasonText})`, 'amber');
+        return { evolvedTo: afterStage };
       } else {
         playSound('attack');
         if (reasonText) {
           showBanner('⚡', `${reasonText} (+${coinsDelta} 🪙 • +${xpDelta} XP)`, 'emerald');
         }
+        return { evolvedTo: null };
       }
     }
 
-    function unlockBadge(badgeKey, badgeTitle) {
+    function unlockBadge(badgeKey, badgeTitle, extraPrefix = '') {
       if (!state.badges[badgeKey]) {
+        const beforeStage = getActivePartnerStageObj().current.name;
         const hadAstralux = !!state.caughtIds.c16;
+        const hadGalaxion = !!state.caughtIds.c17;
         state.badges[badgeKey] = true;
         state.coins += 60;
         state.xp += 50;
-        const allFive = GYM_BADGE_DEFS.every((b) => !!state.badges[b.key]);
-        if (allFive) {
+        const allCoreFive = CORE_BADGE_KEYS.every((k) => !!state.badges[k]);
+        if (allCoreFive) {
           state.caughtIds.c16 = true; // Unlock Legendary Astralux
         }
+        if (badgeKey === 'cosmic') {
+          state.caughtIds.c17 = true; // Unlock Mythic Galaxion
+        }
+        const afterStage = getActivePartnerStageObj().current.name;
         saveState();
         updateHeaderAndHqUI();
         renderPokedexStage();
+        if (typeof populateFusionPickers === 'function') populateFusionPickers();
         playSound('fanfare');
-        spawnConfetti(allFive ? 120 : 80);
-        const legendMsg = allFive && !hadAstralux
-          ? ' ✨ ALL 5 BADGES EARNED — Legendary #016 Astralux awakened in your Pokédex!'
-          : '';
-        showBanner('🏅', `GYM BADGE UNLOCKED: ${badgeTitle}! (+60 Coins & +50 XP!)${legendMsg}`, 'amber');
+        spawnConfetti(allCoreFive || badgeKey === 'cosmic' ? 120 : 80);
+        const notes = [];
+        if (extraPrefix) notes.push(extraPrefix);
+        notes.push(`GYM BADGE UNLOCKED: ${badgeTitle}! (+60 Coins & +50 XP!)`);
+        if (afterStage !== beforeStage) {
+          notes.push(`✨ Your partner evolved into ${afterStage}!`);
+        }
+        if (allCoreFive && !hadAstralux) {
+          notes.push('✨ ALL 5 CORE BADGES EARNED — Legendary #016 Astralux awakened in your Pokédex!');
+        }
+        if (badgeKey === 'cosmic' && !hadGalaxion) {
+          notes.push('🪐 COSMIC BADGE EARNED — Mythic #017 Galaxion awakened in your Pokédex!');
+        }
+        showBanner('🏅', notes.join(' '), 'amber');
+        return true;
       }
+      return false;
     }
 
     // =====================================================
@@ -2469,54 +2945,86 @@
             hint: `💡 Like Denominators: When the bottom number (${den}) is the same, just add the top numerators (${n1} + ${n2})!`
           };
         } else if (grade === 4) {
-          const pairs = [
-            { f1: '1/2', d2: 8, ans: 4 },
-            { f1: '1/3', d2: 12, ans: 4 },
-            { f1: '2/3', d2: 12, ans: 8 },
-            { f1: '3/4', d2: 8, ans: 6 },
-            { f1: '2/5', d2: 10, ans: 4 },
-            { f1: '3/5', d2: 15, ans: 9 }
+          const baseFracs = [
+            { n: 1, d: 2 }, { n: 1, d: 3 }, { n: 2, d: 3 },
+            { n: 1, d: 4 }, { n: 3, d: 4 }, { n: 2, d: 5 },
+            { n: 3, d: 5 }, { n: 4, d: 5 }, { n: 5, d: 6 }
           ];
-          const p = pairs[randInt(0, pairs.length - 1)];
+          const f = baseFracs[randInt(0, baseFracs.length - 1)];
+          const mult = randInt(2, 4);
+          const d2 = f.d * mult;
+          const ans = f.n * mult;
           return {
             topic: '🌊 Lv.40 Equivalent Fraction Multiplier',
-            prompt: `${p.f1} = ?/${p.d2} (Find the missing numerator!)`,
-            answer: p.ans,
-            fractionDen: p.d2,
-            choices: buildChoices(p.ans),
-            hint: `💡 Golden Fraction Rule: Whatever you multiply the bottom denominator by to get ${p.d2}, multiply the top numerator by the exact same number!`
+            prompt: `${f.n}/${f.d} = ?/${d2} (Find the missing numerator!)`,
+            answer: ans,
+            fractionDen: d2,
+            choices: buildChoices(ans),
+            hint: `💡 Golden Fraction Rule: ${f.d} × ${mult} = ${d2}, so multiply the top numerator (${f.n}) by ${mult} too!`
           };
         } else if (grade === 5) {
-          const decProblems = [
-            { p: '25% of 80 = ?', ans: 20, h: '25% is 1/4! Divide 80 by 4.' },
-            { p: '50% of 140 = ?', ans: 70, h: '50% is exactly half! Divide 140 by 2.' },
-            { p: '10% of 250 = ?', ans: 25, h: 'To find 10%, divide by 10 (move the decimal 1 spot left)!' },
-            { p: '75% of 40 = ?', ans: 30, h: '75% is 3/4! Find 1/4 of 40 (10), then multiply by 3!' }
+          const pctTypes = [
+            { pct: 10, base: randInt(3, 28) * 10, tip: (b) => `To find 10% of ${b}, divide by 10 (shift one digit right)!` },
+            { pct: 25, base: randInt(3, 20) * 4, tip: (b) => `25% is 1/4! Divide ${b} by 4 (half, then half again)!` },
+            { pct: 50, base: randInt(8, 70) * 2, tip: (b) => `50% is exactly half! Divide ${b} by 2!` },
+            { pct: 75, base: randInt(2, 16) * 4, tip: (b) => `75% is 3/4! Find 1/4 of ${b} first (${b / 4}), then multiply by 3!` }
           ];
-          const item = decProblems[randInt(0, decProblems.length - 1)];
+          const pick = pctTypes[randInt(0, pctTypes.length - 1)];
+          const ans = Math.round((pick.pct / 100) * pick.base);
           return {
             topic: '🌊 Lv.50 Percent Power Pulse',
-            prompt: item.p,
-            answer: item.ans,
-            choices: buildChoices(item.ans),
-            hint: `💡 Percent Strategy: ${item.h}`
+            prompt: `${pick.pct}% of ${pick.base} = ?`,
+            answer: ans,
+            choices: buildChoices(ans),
+            hint: `💡 Percent Strategy: ${pick.tip(pick.base)}`
           };
         } else {
-          // Grade 6 Ratios & Percents
-          const pcts = [
-            { p: '20% of 150 = ?', ans: 30, h: '10% of 150 is 15, so 20% is 15 × 2 = 30!' },
-            { p: '15% of 200 = ?', ans: 30, h: '10% of 200 is 20, and 5% is 10. Add 20 + 10 = 30!' },
-            { p: '30% of 90 = ?', ans: 27, h: '10% of 90 is 9, so 30% is 9 × 3 = 27!' },
-            { p: 'If Fire:Water ratio is 3:5 and Fire = 15, Water = ?', ans: 25, h: 'Scale Factor: 3 × 5 = 15, so multiply 5 × 5 = 25!' }
-          ];
-          const item = pcts[randInt(0, pcts.length - 1)];
-          return {
-            topic: '🐉 Lv.60+ Ratio & Percent Mastery',
-            prompt: item.p,
-            answer: item.ans,
-            choices: buildChoices(item.ans),
-            hint: `💡 Ratio & Percent Trick: ${item.h}`
-          };
+          // Grade 6 Procedural Ratios & Percents (non-spoiler strategy hints!)
+          const mode = randInt(1, 3);
+          if (mode === 1) {
+            const pct = [20, 30, 40, 60][randInt(0, 3)];
+            const base = randInt(4, 20) * 10;
+            const tenPct = base / 10;
+            const mult = pct / 10;
+            const ans = tenPct * mult;
+            return {
+              topic: '🐉 Lv.60+ Percent Power Mastery',
+              prompt: `${pct}% of ${base} = ?`,
+              answer: ans,
+              choices: buildChoices(ans),
+              hint: `💡 10% Anchor Trick: First find 10% of ${base} (${tenPct}), then multiply that by ${mult}!`
+            };
+          } else if (mode === 2) {
+            const base = randInt(3, 14) * 20;
+            const tenPct = base / 10;
+            const fivePct = tenPct / 2;
+            const ans = tenPct + fivePct;
+            return {
+              topic: '🐉 Lv.60+ 15% Precision Strike',
+              prompt: `15% of ${base} = ?`,
+              answer: ans,
+              choices: buildChoices(ans),
+              hint: `💡 Split 15% into 10% + 5%: 10% of ${base} is ${tenPct}, and 5% is half of that (${fivePct}) — now add them!`
+            };
+          } else {
+            const pairs = [
+              ['Fire', 'Water'], ['Electric', 'Rock'], ['Grass', 'Ice'], ['Dragon', 'Cosmic']
+            ];
+            const [elA, elB] = pairs[randInt(0, pairs.length - 1)];
+            const rA = randInt(2, 5);
+            let rB = randInt(3, 7);
+            if (rB === rA) rB += 1;
+            const scale = randInt(3, 7);
+            const valA = rA * scale;
+            const ans = rB * scale;
+            return {
+              topic: '🐉 Lv.60+ Elemental Ratio Scaling',
+              prompt: `If ${elA}:${elB} ratio is ${rA}:${rB} and ${elA} = ${valA}, ${elB} = ?`,
+              answer: ans,
+              choices: buildChoices(ans),
+              hint: `💡 Scale Factor: Ask what multiplies ${rA} to make ${valA} (×${scale}), then multiply ${rB} by that same scale factor!`
+            };
+          }
         }
       }
 
@@ -2582,6 +3090,16 @@
       }
     }
 
+    function generateUniqueMathProblem(category = 'all', prevPrompt = null) {
+      let q = generateMathProblem(category);
+      let tries = 0;
+      while (prevPrompt && q.prompt === prevPrompt && tries < 6) {
+        q = generateMathProblem(category);
+        tries++;
+      }
+      return q;
+    }
+
     // =====================================================
     // 6. HEADER, LEAGUE HQ & GRADE DIAL RENDERING
     // =====================================================
@@ -2600,10 +3118,10 @@
       document.getElementById('xpDisplay').textContent = `${state.xp} XP`;
 
       const badgeCount = Object.values(state.badges).filter(Boolean).length;
-      document.getElementById('badgeDisplay').textContent = `${badgeCount} / 5`;
+      document.getElementById('badgeDisplay').textContent = `${badgeCount} / ${GYM_BADGE_DEFS.length}`;
 
       const caughtCount = Object.keys(state.caughtIds).filter((k) => state.caughtIds[k]).length;
-      document.getElementById('navDexCount').textContent = `${caughtCount}/16`;
+      document.getElementById('navDexCount').textContent = `${caughtCount}/${POKEDEX_CREATURES.length}`;
 
       const turnPill = document.getElementById('activeTurnPill');
       turnPill.textContent = state.coopMode ? `🤝 Turn: ${state.currentPlayerTurn}` : '🧢 Trainer Ozias';
@@ -2625,8 +3143,25 @@
         document.getElementById('hqXpBar').style.width = '100%';
       }
 
-      // Grand Champion Banner
-      document.getElementById('grandChampionBanner').classList.toggle('hidden', badgeCount < 5);
+      // Grand Champion Banner (Unlocks at 5/5 Core Badges, upgrades at 6/6 Cosmic Grand Master!)
+      const hasAllCore = CORE_BADGE_KEYS.every((k) => !!state.badges[k]);
+      const hasAllSix = badgeCount >= GYM_BADGE_DEFS.length;
+      const champBanner = document.getElementById('grandChampionBanner');
+      champBanner.classList.toggle('hidden', !hasAllCore);
+      if (hasAllCore) {
+        const eyebrow = document.getElementById('grandChampEyebrow');
+        const title = document.getElementById('grandChampTitle');
+        const sub = document.getElementById('grandChampSub');
+        if (hasAllSix) {
+          if (eyebrow) eyebrow.textContent = 'ULTIMATE 6/6 COSMIC POKÉMATH GRAND MASTER!';
+          if (title) title.textContent = 'Cosmic Champions Ozias & Mom Marisa Mastered Every Arena!';
+          if (sub) sub.textContent = 'Legendary Astralux & Mythic Galaxion Awakened • Forge Custom Hybrids in Arena 6!';
+        } else {
+          if (eyebrow) eyebrow.textContent = 'All 5 Core PokéMath League Gym Badges Earned!';
+          if (title) title.textContent = 'Grand Master Ozias & Mom Marisa Have Conquered the League!';
+          if (sub) sub.textContent = 'Legendary Astralux Unlocked • Explore Arena 6 for the 6th Cosmic Badge & Mythic Galaxion!';
+        }
+      }
 
       // Co-op readouts
       document.getElementById('oziasScoreReadout').textContent = state.oziasPoints;
@@ -2643,6 +3178,7 @@
           : `Current League: ${tier.name}`;
       }
 
+      if (typeof updateCosmicHeaderStats === 'function') updateCosmicHeaderStats();
       renderGradeDialCards();
       renderStarterPicker();
     }
@@ -2728,6 +3264,8 @@
       renderQuestProblem();
       spawnArcadeWave();
       drawArcadeFrame();
+      if (typeof resetRadarExpeditionForGrade === 'function') resetRadarExpeditionForGrade();
+      if (typeof generateFusionPuzzle === 'function') generateFusionPuzzle();
       showBanner('🎚️', `Grade Difficulty Dialed to: ${GRADE_TIERS[newMode].name}!`, 'amber');
     }
 
@@ -2742,6 +3280,7 @@
       saveState();
       updateHeaderAndHqUI();
       renderBattleArena();
+      if (typeof updateCosmicHeaderStats === 'function') updateCosmicHeaderStats();
       showBanner(
         '👩‍👦',
         state.coopMode
@@ -2826,20 +3365,46 @@
       if (state.activeTab === 'speedcatch' && tabId !== 'speedcatch' && typeof stopSpeedTimer === 'function') {
         stopSpeedTimer(false);
       }
+      if (state.activeTab === 'cosmic' && tabId !== 'cosmic' && typeof stopRadarAnim === 'function') {
+        stopRadarAnim();
+      }
       state.activeTab = tabId;
       document.querySelectorAll('.stage-view').forEach((el) => {
         el.classList.toggle('hidden', el.id !== `view-${tabId}`);
       });
       document.querySelectorAll('.nav-tab').forEach((btn) => {
-        const isCurrent = btn.getAttribute('data-tab') === tabId;
-        btn.className = isCurrent
-          ? 'nav-tab px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-amber-400 text-slate-950 shadow'
-          : 'nav-tab px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-slate-800/90 text-slate-200 hover:bg-slate-700';
+        const key = btn.getAttribute('data-tab');
+        const isCurrent = key === tabId;
+        if (isCurrent) {
+          btn.className = key === 'cosmic'
+            ? 'nav-tab px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-cyan-400 text-slate-950 shadow'
+            : 'nav-tab px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-amber-400 text-slate-950 shadow';
+        } else {
+          btn.className = key === 'cosmic'
+            ? 'nav-tab px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-slate-800/90 text-cyan-200 hover:bg-slate-700 border border-cyan-400/40'
+            : 'nav-tab px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-slate-800/90 text-slate-200 hover:bg-slate-700';
+        }
       });
       if (tabId === 'battle') {
+        // Start the 8-second Critical Hit timer fairly when entering Arena 1
+        state.questionShownAt = Date.now();
         setTimeout(resizeScratchCanvas, 50);
       } else if (tabId === 'arcade') {
-        setTimeout(resizeArcadeCanvas, 50);
+        setTimeout(() => {
+          resizeArcadeCanvas();
+          if (!arcade.running && arcade.gateX < arcadeCanvas.width * 0.65) {
+            arcade.gateX = Math.max(260, arcadeCanvas.width - 60);
+            drawArcadeFrame();
+          }
+        }, 50);
+      } else if (tabId === 'cosmic') {
+        setTimeout(() => {
+          if (typeof resizeRadarCanvas === 'function') resizeRadarCanvas();
+          if (state.cosmicSubMode === 'radar' && typeof startRadarAnim === 'function') {
+            startRadarAnim();
+          }
+          if (typeof populateFusionPickers === 'function') populateFusionPickers();
+        }, 50);
       }
     }
 
@@ -2848,14 +3413,33 @@
     });
 
     document.getElementById('enterBattleArenaBtn').addEventListener('click', () => switchTab('battle'));
+    document.getElementById('enterCosmicArenaBtn').addEventListener('click', () => switchTab('cosmic'));
     document.getElementById('jumpToDexBtn').addEventListener('click', () => switchTab('pokedex'));
 
     // =====================================================
     // 8. STAGE 1: GYM BATTLE ARENA & SCRATCHPAD
     // =====================================================
+    function pickNextWildEnemyIdx(currentIdx) {
+      const wildIndices = [];
+      for (let i = 4; i <= 14; i++) wildIndices.push(i);
+      const uncaughtWild = wildIndices.filter((i) => !state.caughtIds[POKEDEX_CREATURES[i].id] && i !== currentIdx);
+      if (uncaughtWild.length > 0) {
+        return uncaughtWild[0];
+      }
+      const next = currentIdx + 1;
+      return next > 14 || next < 4 ? 4 : next;
+    }
+
     function renderBattleArena() {
       const effGrade = getEffectiveNumericGrade();
+      const arenaNames = {
+        3: 'Boulder Canyon Gym — Defeat Wild Creatures to Catch Them!',
+        4: 'Cascade Falls Gym — Dialed-Up 4th Grade Battle Arena!',
+        5: 'Thunder Peak Gym — 5th Grade Challenger Stadium!',
+        6: 'Dragon Master Citadel — Elite 6th Grade Boss Arena!'
+      };
       document.getElementById('battleGradeBadge').textContent = `⚔️ Gym Battle Arena • Lv.${effGrade * 10} (Grade ${effGrade})`;
+      document.getElementById('battleArenaTitle').textContent = arenaNames[effGrade] || arenaNames[3];
       document.getElementById('battleTurnBanner').textContent = state.coopMode
         ? `🤝 ${state.currentPlayerTurn}'s Attack Turn!`
         : `🧢 Trainer Ozias's Attack Turn!`;
@@ -2873,7 +3457,8 @@
       document.getElementById('battlePlayerHpText').textContent = `${state.playerHp} / 100`;
       document.getElementById('battlePlayerHpBar').style.width = `${state.playerHp}%`;
 
-      const enemy = POKEDEX_CREATURES[state.enemyIdx % POKEDEX_CREATURES.length];
+      const safeIdx = Math.min(14, Math.max(4, state.enemyIdx));
+      const enemy = POKEDEX_CREATURES[safeIdx];
       document.getElementById('enemyRankBadge').textContent = state.isBossBattle ? '👑 GYM LEADER BOSS' : `Wild ${enemy.dexNum}`;
       document.getElementById('enemyNameDisplay').textContent = enemy.displayName || enemy.name;
       document.getElementById('enemyTypeBadge').textContent = enemy.type;
@@ -2894,7 +3479,8 @@
     }
 
     function loadNextBattleQuestion() {
-      state.currentBattleQ = generateMathProblem(state.moveCat);
+      const prevPrompt = state.currentBattleQ ? state.currentBattleQ.prompt : null;
+      state.currentBattleQ = generateUniqueMathProblem(state.moveCat, prevPrompt);
       state.questionShownAt = Date.now();
       const q = state.currentBattleQ;
       document.getElementById('battleProblemTopicTag').textContent = q.topic;
@@ -2915,21 +3501,45 @@
       renderBattleArena();
     }
 
+    function parseBattleUserInput(rawInput, currentQ) {
+      let cleaned = String(rawInput ?? '')
+        .trim()
+        .replace(/,/g, '')
+        .replace(/−/g, '-')
+        .replace(/^[a-zA-Z]\s*=\s*/, '')
+        .replace(/^-\s+/, '-');
+      if (cleaned === '') return { valid: false, value: NaN };
+
+      let val = Number(cleaned);
+      if (Number.isNaN(val) && currentQ && currentQ.fractionDen) {
+        const fracMatch = cleaned.match(/^(\d+)\s*\/\s*(\d+)$/);
+        if (fracMatch) {
+          const num = Number(fracMatch[1]);
+          const den = Number(fracMatch[2]);
+          if (den === Number(currentQ.fractionDen)) {
+            val = num;
+          } else if (den > 0 && Math.abs((num / den) - (Number(currentQ.answer) / Number(currentQ.fractionDen))) < 1e-9) {
+            val = Number(currentQ.answer);
+          }
+        }
+      }
+      return { valid: Number.isFinite(val), value: val };
+    }
+
     function evaluateBattleAttack(userAnswer) {
       if (!state.currentBattleQ) return;
       const rawStr = String(userAnswer ?? '').trim();
       if (rawStr === '') return;
 
-      const expected = Number(state.currentBattleQ.answer);
-      let given = Number(rawStr);
-      // Also accept full fraction input (e.g. "5/8") on numerator-only fraction prompts
-      if (Number.isNaN(given) && state.currentBattleQ.fractionDen) {
-        const fracMatch = rawStr.match(/^(\d+)\s*\/\s*(\d+)$/);
-        if (fracMatch && Number(fracMatch[2]) === Number(state.currentBattleQ.fractionDen)) {
-          given = Number(fracMatch[1]);
-        }
+      const parsed = parseBattleUserInput(rawStr, state.currentBattleQ);
+      if (!parsed.valid) {
+        playSound('oops');
+        showBanner('🔢', 'Type a number (or matching fraction like 5/8) to launch your attack!', 'amber');
+        return;
       }
-      if (Number.isNaN(given)) return;
+
+      const expected = Number(state.currentBattleQ.answer);
+      const given = parsed.value;
 
       if (given === expected) {
         const elapsedSec = (Date.now() - state.questionShownAt) / 1000;
@@ -2944,30 +3554,36 @@
 
         if (state.enemyHp === 0) {
           // Creature Defeated & Caught!
-          const caughtCreature = POKEDEX_CREATURES[state.enemyIdx % POKEDEX_CREATURES.length];
+          const safeIdx = Math.min(14, Math.max(4, state.enemyIdx));
+          const caughtCreature = POKEDEX_CREATURES[safeIdx];
           state.caughtIds[caughtCreature.id] = true;
           state.battlesWon += 1;
           state.playerHp = 100; // Restore Partner HP Shield for the next battle
           playSound('catch');
           spawnConfetti(60);
 
-          grantRewards(
+          const catchSummary = `GOTCHA! ${caughtCreature.displayName || caughtCreature.name} was caught!`;
+          const rewardInfo = grantRewards(
             state.isBossBattle ? 60 : 35,
             state.isBossBattle ? 55 : 35,
-            `GOTCHA! ${caughtCreature.displayName || caughtCreature.name} was caught and added to Ozias's Pokédex!`
+            `${catchSummary} Added to Ozias's Pokédex!`
           );
 
           if (state.battlesWon >= 3) {
-            unlockBadge('boulder', 'Boulder Canyon Battle Badge');
+            const prefix = rewardInfo.evolvedTo
+              ? `${catchSummary} ✨ Partner evolved into ${rewardInfo.evolvedTo}!`
+              : catchSummary;
+            unlockBadge('boulder', 'Boulder Canyon Battle Badge', prefix);
           }
 
-          // Spawn next creature
+          // Spawn next wild creature (preferring uncaught creatures first!)
           state.isBossBattle = false;
-          state.enemyIdx = (state.enemyIdx + 1) % (POKEDEX_CREATURES.length - 1);
-          if (state.enemyIdx < 4) state.enemyIdx = 4;
+          state.enemyIdx = pickNextWildEnemyIdx(safeIdx);
           state.enemyMaxHp = 100;
           state.enemyHp = 100;
+          saveState();
           renderPokedexStage();
+          if (typeof populateFusionPickers === 'function') populateFusionPickers();
         } else {
           grantRewards(
             isCrit ? 25 : 15,
@@ -3042,7 +3658,7 @@
       showBanner('👑', `GYM LEADER BOSS APPROACHING! Defeat ${POKEDEX_CREATURES[state.enemyIdx].displayName || POKEDEX_CREATURES[state.enemyIdx].name} for massive XP!`, 'amber');
     });
 
-    // Built-In Trainer Scratchpad Canvas
+    // Built-In Trainer Scratchpad Canvas (preserves strokes on resize!)
     const scratchCanvas = document.getElementById('scratchCanvas');
     const scratchCtx = scratchCanvas.getContext('2d');
     let isScratching = false;
@@ -3053,8 +3669,18 @@
       const targetW = Math.round(rect.width);
       const targetH = Math.round(rect.height);
       if (targetW > 0 && targetH > 0 && (scratchCanvas.width !== targetW || scratchCanvas.height !== targetH)) {
+        let snapshot = null;
+        if (scratchCanvas.width > 0 && scratchCanvas.height > 0) {
+          snapshot = document.createElement('canvas');
+          snapshot.width = scratchCanvas.width;
+          snapshot.height = scratchCanvas.height;
+          snapshot.getContext('2d').drawImage(scratchCanvas, 0, 0);
+        }
         scratchCanvas.width = targetW;
         scratchCanvas.height = targetH;
+        if (snapshot) {
+          scratchCtx.drawImage(snapshot, 0, 0);
+        }
       }
     }
 
@@ -3120,12 +3746,21 @@
     // =====================================================
     let speedTimerInterval = null;
     let speedSecondsLeft = 60;
+    let speedSprintFinished = false;
 
     function formatSpeedClock(sec) {
       if (sec <= 0) return 'ZEN ∞';
       const m = Math.floor(sec / 60);
       const s = sec % 60;
       return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function setSpeedChoicesDisabled(disabled) {
+      document.querySelectorAll('#speedChoicesGrid button').forEach((b) => {
+        b.disabled = disabled;
+        b.classList.toggle('opacity-50', disabled);
+        b.classList.toggle('cursor-not-allowed', disabled);
+      });
     }
 
     function stopSpeedTimer(resetClock = false) {
@@ -3136,6 +3771,8 @@
       const startBtn = document.getElementById('speedStartBtn');
       if (startBtn) startBtn.textContent = '▶ Start Sprint';
       if (resetClock) {
+        speedSprintFinished = false;
+        setSpeedChoicesDisabled(false);
         const dur = parseInt(document.getElementById('speedDurationSelect').value, 10) || 0;
         speedSecondsLeft = dur;
         document.getElementById('speedClockReadout').textContent = formatSpeedClock(dur);
@@ -3163,6 +3800,8 @@
 
     document.getElementById('speedDurationSelect').addEventListener('change', (e) => {
       if (!speedTimerInterval) {
+        speedSprintFinished = false;
+        setSpeedChoicesDisabled(false);
         const dur = parseInt(e.target.value, 10) || 0;
         speedSecondsLeft = dur;
         document.getElementById('speedClockReadout').textContent = formatSpeedClock(dur);
@@ -3171,7 +3810,8 @@
 
     function loadNextSpeedQuestion() {
       const effGrade = getEffectiveNumericGrade();
-      state.currentSpeedQ = generateMathProblem('multdiv');
+      const prevPrompt = state.currentSpeedQ ? state.currentSpeedQ.prompt : null;
+      state.currentSpeedQ = generateUniqueMathProblem('multdiv', prevPrompt);
       document.getElementById('speedBallTag').textContent = `🔴 Speed Catch Target • Lv.${effGrade * 10} (Grade ${effGrade})`;
       document.getElementById('speedEquationText').textContent = state.currentSpeedQ.prompt;
       document.getElementById('speedStrategyTip').classList.add('hidden');
@@ -3184,7 +3824,10 @@
         btn.type = 'button';
         btn.className = 'py-4 rounded-2xl bg-slate-800 hover:bg-sky-400 hover:text-slate-950 border-2 border-slate-600 text-2xl sm:text-3xl font-extrabold text-white game-font transition';
         btn.textContent = choice;
+        btn.disabled = speedSprintFinished;
+        if (speedSprintFinished) btn.classList.add('opacity-50', 'cursor-not-allowed');
         btn.addEventListener('click', () => {
+          if (speedSprintFinished) return;
           if (Number(choice) === Number(state.currentSpeedQ.answer)) {
             state.speedCaughtSession += 1;
             if (state.speedCaughtSession > state.speedBestScore) {
@@ -3213,13 +3856,20 @@
       tip.textContent = state.currentSpeedQ.hint;
     });
 
-    document.getElementById('speedSkipBtn').addEventListener('click', loadNextSpeedQuestion);
+    document.getElementById('speedSkipBtn').addEventListener('click', () => {
+      if (speedSprintFinished) {
+        speedSprintFinished = false;
+        stopSpeedTimer(true);
+      }
+      loadNextSpeedQuestion();
+    });
 
     document.getElementById('speedStartBtn').addEventListener('click', () => {
       if (speedTimerInterval) {
         stopSpeedTimer(false);
         return;
       }
+      speedSprintFinished = false;
       const dur = parseInt(document.getElementById('speedDurationSelect').value, 10) || 0;
       state.speedCaughtSession = 0;
       loadNextSpeedQuestion();
@@ -3233,16 +3883,17 @@
       document.getElementById('speedStartBtn').textContent = '⏸ Stop';
       playSound('laser');
       speedTimerInterval = setInterval(() => {
-        if (speedSecondsLeft > 0) {
-          speedSecondsLeft--;
-          const m = Math.floor(speedSecondsLeft / 60);
-          const s = speedSecondsLeft % 60;
-          document.getElementById('speedClockReadout').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-        } else {
+        speedSecondsLeft = Math.max(0, speedSecondsLeft - 1);
+        const m = Math.floor(speedSecondsLeft / 60);
+        const s = speedSecondsLeft % 60;
+        document.getElementById('speedClockReadout').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        if (speedSecondsLeft <= 0) {
           stopSpeedTimer(false);
+          speedSprintFinished = true;
+          setSpeedChoicesDisabled(true);
           playSound('fanfare');
           spawnConfetti(60);
-          showBanner('🏆', `Speed-Catch Sprint Complete! Ozias caught ${state.speedCaughtSession} targets!`, 'amber');
+          showBanner('🏆', `Speed-Catch Sprint Complete! Ozias caught ${state.speedCaughtSession} targets! Hit ▶ Start Sprint to race again!`, 'amber');
         }
       }, 1000);
     });
@@ -3317,7 +3968,14 @@
     function verifyMatrixCellAnswer() {
       const { r, c } = state.activeMatrixCell;
       const inputEl = document.getElementById('matrixAnsInput');
-      const val = parseInt(inputEl.value, 10);
+      const raw = inputEl.value.trim();
+      if (raw === '') {
+        if (state.masteredCells[`${r}x${c}`]) {
+          pickMatrixCellInRange(3, 12);
+        }
+        return;
+      }
+      const val = parseInt(raw, 10);
       if (Number.isNaN(val)) return;
       if (val === r * c) {
         const keyA = `${r}x${c}`;
@@ -3379,6 +4037,25 @@
       btn.addEventListener('click', () => switchLabMode(btn.getAttribute('data-lab-mode')));
     });
 
+    function renderAreaModelSvg() {
+      const { b, tenPart, onePart } = state.activeAreaProb;
+      const valA = document.getElementById('areaInputA').value.trim();
+      const valB = document.getElementById('areaInputB').value.trim();
+      const boxAText = valA !== '' ? `${tenPart} × ${b} = ${valA}` : `Box A: ${tenPart} × ${b}`;
+      const boxBText = valB !== '' ? `${onePart} × ${b} = ${valB}` : `Box B: ${onePart} × ${b}`;
+      document.getElementById('areaSvgBox').innerHTML = `
+        <svg viewBox="0 0 460 155" class="w-full max-w-md h-36">
+          <rect x="38" y="32" width="240" height="92" rx="10" fill="rgba(56, 189, 248, 0.2)" stroke="#38bdf8" stroke-width="3"/>
+          <rect x="284" y="32" width="156" height="92" rx="10" fill="rgba(16, 185, 129, 0.2)" stroke="#10b981" stroke-width="3"/>
+          <text x="158" y="23" fill="#38bdf8" font-size="15" font-weight="bold" text-anchor="middle">${tenPart}</text>
+          <text x="362" y="23" fill="#10b981" font-size="15" font-weight="bold" text-anchor="middle">+ ${onePart}</text>
+          <text x="19" y="83" fill="#facc15" font-size="16" font-weight="bold" text-anchor="middle">${b}</text>
+          <text x="158" y="83" fill="#e2e8f0" font-size="16" font-weight="bold" text-anchor="middle">${boxAText}</text>
+          <text x="362" y="83" fill="#e2e8f0" font-size="15" font-weight="bold" text-anchor="middle">${boxBText}</text>
+        </svg>
+      `;
+    }
+
     function generateAreaModelProblem() {
       const grade = getEffectiveNumericGrade();
       let a = 14;
@@ -3412,24 +4089,18 @@
       document.getElementById('areaInputB').value = '';
       document.getElementById('areaInputTotal').value = '';
 
-      document.getElementById('areaSvgBox').innerHTML = `
-        <svg viewBox="0 0 420 150" class="w-full max-w-md h-36">
-          <rect x="30" y="30" width="230" height="90" rx="10" fill="rgba(56, 189, 248, 0.2)" stroke="#38bdf8" stroke-width="3"/>
-          <rect x="265" y="30" width="125" height="90" rx="10" fill="rgba(16, 185, 129, 0.2)" stroke="#10b981" stroke-width="3"/>
-          <text x="145" y="22" fill="#38bdf8" font-size="15" font-weight="bold" text-anchor="middle">${tenPart}</text>
-          <text x="327" y="22" fill="#10b981" font-size="15" font-weight="bold" text-anchor="middle">+ ${onePart}</text>
-          <text x="16" y="80" fill="#facc15" font-size="16" font-weight="bold" text-anchor="middle">${b}</text>
-          <text x="145" y="80" fill="#e2e8f0" font-size="18" font-weight="bold" text-anchor="middle">Box A: ${tenPart} × ${b}</text>
-          <text x="327" y="80" fill="#e2e8f0" font-size="18" font-weight="bold" text-anchor="middle">Box B: ${onePart} × ${b}</text>
-        </svg>
-      `;
+      renderAreaModelSvg();
     }
+
+    document.getElementById('areaInputA').addEventListener('input', renderAreaModelSvg);
+    document.getElementById('areaInputB').addEventListener('input', renderAreaModelSvg);
 
     document.getElementById('areaAutoSplitBtn').addEventListener('click', () => {
       const { a, b, tenPart, onePart } = state.activeAreaProb;
       playSound('laser');
       spawnConfetti(25);
       document.getElementById('areaInputA').value = tenPart * b;
+      renderAreaModelSvg();
       speakText(`${a} splits into ${tenPart} plus ${onePart}. Box A is ${tenPart} times ${b} equals ${tenPart * b}! Now solve Box B and add them!`);
       showBanner('💥', `Mega-Split! Box A (${tenPart} × ${b} = ${tenPart * b}) filled in! Now calculate Box B (${onePart} × ${b}) and combine!`, 'amber');
     });
@@ -3442,11 +4113,20 @@
       const expB = onePart * b;
       const expTotal = a * b;
 
-      const uA = parseInt(document.getElementById('areaInputA').value, 10);
-      const uB = parseInt(document.getElementById('areaInputB').value, 10);
-      const uTot = parseInt(document.getElementById('areaInputTotal').value, 10);
+      const rawA = document.getElementById('areaInputA').value.trim();
+      const rawB = document.getElementById('areaInputB').value.trim();
+      const rawTot = document.getElementById('areaInputTotal').value.trim();
 
-      document.getElementById('areaCombineLabel').textContent = `${expA} + ${expB} =`;
+      if (rawA === '' || rawB === '' || rawTot === '') {
+        playSound('oops');
+        showBanner('🧪', 'Fill in Box A, Box B, and the Total before verifying your Mega-Split!', 'amber');
+        return;
+      }
+
+      const uA = parseInt(rawA, 10);
+      const uB = parseInt(rawB, 10);
+      const uTot = parseInt(rawTot, 10);
+      if (Number.isNaN(uA) || Number.isNaN(uB) || Number.isNaN(uTot)) return;
 
       if (uA === expA && uB === expB && uTot === expTotal) {
         grantRewards(35, 35, `Mega-Split Master! (${tenPart}×${b}=${expA}) + (${onePart}×${b}=${expB}) = ${expTotal}!`);
@@ -3454,11 +4134,24 @@
         generateAreaModelProblem();
       } else {
         playSound('oops');
-        showBanner('🧪', `Check each box: Box A (${tenPart} × ${b} = ${expA}), Box B (${onePart} × ${b} = ${expB}), then add ${expA} + ${expB}!`, 'amber');
+        const wrongParts = [];
+        if (uA !== expA) wrongParts.push(`Box A (${tenPart} × ${b})`);
+        if (uB !== expB) wrongParts.push(`Box B (${onePart} × ${b})`);
+        if (uA === expA && uB === expB && uTot !== expTotal) {
+          document.getElementById('areaCombineLabel').textContent = `${expA} + ${expB} =`;
+          wrongParts.push(`Total (${expA} + ${expB})`);
+        }
+        showBanner('🧪', `Almost there! Double-check ${wrongParts.join(' and ')} — or tap Mega-Split for a Box A boost!`, 'amber');
       }
     }
 
     document.getElementById('areaVerifyBtn').addEventListener('click', verifyAreaModelSolution);
+    document.getElementById('areaInputA').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); document.getElementById('areaInputB').focus(); }
+    });
+    document.getElementById('areaInputB').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); document.getElementById('areaInputTotal').focus(); }
+    });
     document.getElementById('areaInputTotal').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -3481,10 +4174,17 @@
             { n1: 2, d1: 3, n2: 6, d2: 9, label1: '2/3', label2: '?/9', q: 'Equivalent Energy: 2/3 is equal to which ninths fraction?', ans: '6/9', opts: ['6/9', '4/9', '3/9', '8/9'] },
             { n1: 3, d1: 5, n2: 6, d2: 10, label1: '3/5', label2: '?/10', q: 'Equivalent Energy: 3/5 equals how many tenths?', ans: '6/10', opts: ['6/10', '3/10', '5/10', '8/10'] }
           ]
-        : [
+        : grade === 5
+        ? [
             { n1: 1, d1: 2, n2: 1, d2: 4, label1: '1/2', label2: '1/4', q: 'Unlike Fractions: Convert 1/2 to 2/4, then add 1/2 + 1/4 = ?', ans: '3/4', opts: ['3/4', '2/6', '1/4', '4/4'] },
             { n1: 3, d1: 4, n2: 75, d2: 100, label1: '3/4', label2: '?% of tank', q: 'Decimal & Percent Reactor: What percentage is 3/4 of a full tank?', ans: '75%', opts: ['75%', '25%', '50%', '80%'] },
             { n1: 2, d1: 5, n2: 4, d2: 10, label1: '2/5', label2: '4/10', q: 'Decimal Reactor: What is 2/5 (or 4/10) written as a decimal?', ans: '0.4', opts: ['0.4', '0.25', '0.5', '0.04'] }
+          ]
+        : [
+            { n1: 3, d1: 5, n2: 60, d2: 100, label1: '3/5', label2: '?% of tank', q: 'Dragon Percent Reactor: Convert 3/5 into a percentage!', ans: '60%', opts: ['60%', '35%', '75%', '40%'] },
+            { n1: 9, d1: 12, n2: 3, d2: 4, label1: '9/12', label2: 'Simplest Form?', q: 'Simplify Ratio Tank Alpha: What is 9/12 in simplest form?', ans: '3/4', opts: ['3/4', '2/3', '4/6', '1/3'] },
+            { n1: 2, d1: 3, n2: 1, d2: 6, label1: '2/3', label2: '1/6', q: 'Unlike Fractions: Convert 2/3 to 4/6, then add 2/3 + 1/6 = ?', ans: '5/6', opts: ['5/6', '3/9', '1/2', '7/6'] },
+            { n1: 1, d1: 8, n2: 5, d2: 8, label1: 'Alpha: 1/8', label2: 'Beta: 5/8', q: 'Ratio Comparison: Tank Beta (5/8) holds how many TIMES as much energy as Tank Alpha (1/8)?', ans: '5×', opts: ['5×', '4×', '6×', '8×'] }
           ];
 
       const prevQ = state.activeFracProb ? state.activeFracProb.q : null;
@@ -3665,7 +4365,9 @@
       lanes: [42, 48, 36],
       correctLane: 0,
       animId: null,
-      lastTime: 0
+      lastTime: 0,
+      flashAlpha: 0,
+      flashColor: '#34d399'
     };
 
     function pauseArcade() {
@@ -3681,7 +4383,7 @@
     }
 
     function spawnArcadeWave() {
-      const q = generateMathProblem('multdiv');
+      const q = generateUniqueMathProblem('multdiv', arcade.prompt);
       arcade.prompt = q.prompt;
       const ans = Number(q.answer);
       const wrong = shuffleArray(q.choices.map(Number).filter((c) => c !== ans));
@@ -3706,8 +4408,16 @@
 
     function resizeArcadeCanvas() {
       const rect = arcadeCanvas.parentElement.getBoundingClientRect();
-      arcadeCanvas.width = Math.max(320, Math.round(rect.width));
-      arcadeCanvas.height = Math.max(250, Math.round(rect.height));
+      // Never shrink canvas when the arcade tab is hidden (rect.width === 0)
+      if (rect.width === 0 || rect.height === 0) return;
+      const prevW = arcadeCanvas.width;
+      const nextW = Math.max(320, Math.round(rect.width));
+      const nextH = Math.max(250, Math.round(rect.height));
+      arcadeCanvas.width = nextW;
+      arcadeCanvas.height = nextH;
+      if (prevW > 0 && nextW !== prevW && !arcade.running) {
+        arcade.gateX = Math.max(260, nextW - 60);
+      }
       drawArcadeFrame();
     }
     window.addEventListener('resize', resizeArcadeCanvas);
@@ -3788,6 +4498,15 @@
 
       arcadeCtx.font = '28px sans-serif';
       arcadeCtx.fillText(getIconGlyph(pInfo.current.icon, 1), 72, py + 2);
+
+      // Subtle gate hit/miss feedback flash
+      if (arcade.flashAlpha > 0.01) {
+        arcadeCtx.save();
+        arcadeCtx.globalAlpha = arcade.flashAlpha;
+        arcadeCtx.fillStyle = arcade.flashColor;
+        arcadeCtx.fillRect(0, trackTop, w, h - trackTop);
+        arcadeCtx.restore();
+      }
     }
 
     function stepArcadeLoop(timestamp) {
@@ -3796,13 +4515,21 @@
       const dt = arcade.lastTime ? Math.min(0.05, Math.max(0.001, (now - arcade.lastTime) / 1000)) : 1 / 60;
       arcade.lastTime = now;
 
-      // Delta-time normalized so 60Hz, 120Hz, and 144Hz screens play at the same fair speed
-      arcade.gateX -= arcade.speed * 60 * dt;
+      if (arcade.flashAlpha > 0) {
+        arcade.flashAlpha = Math.max(0, arcade.flashAlpha - dt * 1.8);
+      }
+
+      // Width-normalized & delta-time normalized so phones, tablets, and desktops give fair reaction time
+      const playableSpan = Math.max(220, arcadeCanvas.width - 155);
+      const travelSeconds = Math.max(3.3, 5.8 - arcade.gatesCleared * 0.32);
+      arcade.gateX -= (playableSpan / travelSeconds) * dt;
 
       if (arcade.gateX <= 95) {
         if (arcade.playerLane === arcade.correctLane) {
           arcade.gatesCleared += 1;
           arcade.speed = Math.min(4.2, 2.3 + arcade.gatesCleared * 0.2);
+          arcade.flashColor = '#34d399';
+          arcade.flashAlpha = 0.28;
           document.getElementById('arcadeScorePill').textContent = `Gates Cleared: ${arcade.gatesCleared} / 6`;
           grantRewards(20, 20, `Volt-Runner Gate Cleared! (${arcade.gatesCleared}/6)`);
           if (arcade.gatesCleared >= 6) {
@@ -3810,6 +4537,8 @@
           }
           spawnArcadeWave();
         } else {
+          arcade.flashColor = '#f43f5e';
+          arcade.flashAlpha = 0.28;
           playSound('oops');
           showBanner('⚡', `Wrong Gate! Aim for ${arcade.lanes[arcade.correctLane]} to solve ${arcade.prompt}!`, 'amber');
           spawnArcadeWave();
@@ -3826,7 +4555,7 @@
         pauseArcade();
       } else {
         resizeArcadeCanvas();
-        if (arcade.gateX < 120 || arcade.gateX > arcadeCanvas.width) {
+        if (arcade.gateX < Math.max(200, arcadeCanvas.width * 0.55) || arcade.gateX > arcadeCanvas.width) {
           spawnArcadeWave();
         }
         arcade.running = true;
@@ -3842,6 +4571,18 @@
         arcade.playerLane = parseInt(btn.getAttribute('data-lane'), 10) || 0;
         drawArcadeFrame();
       });
+    });
+
+    // Direct tap/click lane switching right on the Volt-Runner canvas
+    arcadeCanvas.addEventListener('pointerdown', (e) => {
+      const rect = arcadeCanvas.getBoundingClientRect();
+      const relY = ((e.clientY - rect.top) / rect.height) * arcadeCanvas.height;
+      const trackTop = 50;
+      if (relY >= trackTop) {
+        const laneIdx = Math.min(2, Math.max(0, Math.floor((relY - trackTop) / ((arcadeCanvas.height - trackTop) / 3))));
+        arcade.playerLane = laneIdx;
+        drawArcadeFrame();
+      }
     });
 
     window.addEventListener('keydown', (e) => {
@@ -3897,7 +4638,11 @@
       POKEDEX_CREATURES.forEach((c) => {
         const isCaught = !!state.caughtIds[c.id];
         const lockedLore = c.id === 'c16'
-          ? 'Earn all 5 Official Gym Badges to awaken Legendary Astralux!'
+          ? 'Earn all 5 Core Gym Badges to awaken Legendary Astralux!'
+          : c.id === 'c17'
+          ? 'Earn the 6th Cosmic Badge in Arena 6 to awaken Mythic Galaxion!'
+          : c.id === 'c18'
+          ? 'Forge your first Mega-Fusion in Arena 6 to awaken Mythic Prismforge!'
           : 'Win Gym Arena battles or open a Mystery Capsule to catch!';
         const card = document.createElement('button');
         card.type = 'button';
@@ -3930,7 +4675,11 @@
             speakText(`${c.displayName || c.name}. ${c.type} type. ${c.lore}`);
             playSound('attack');
           } else if (c.id === 'c16') {
-            showBanner('🏅', 'Earn all 5 Official Gym Badges to awaken Legendary #016 Astralux!', 'amber');
+            showBanner('🏅', 'Earn all 5 Core Gym Badges to awaken Legendary #016 Astralux!', 'amber');
+          } else if (c.id === 'c17') {
+            showBanner('🪐', 'Complete a 5-Signal Radar Expedition or 3 Mega-Fusions in Arena 6 to awaken Mythic #017 Galaxion!', 'amber');
+          } else if (c.id === 'c18') {
+            showBanner('🧬', 'Forge a Mega-Fusion equation in Arena 6 to awaken Mythic #018 Prismforge!', 'amber');
           } else {
             showBanner('🔴', `Battle in Arena 1 or open a Mystery Capsule to discover ${c.dexNum}!`, 'amber');
           }
@@ -3940,12 +4689,13 @@
     }
 
     document.getElementById('buyMysteryCapsuleBtn').addEventListener('click', () => {
-      const uncaught = POKEDEX_CREATURES.filter((c) => c.id !== 'c16' && !state.caughtIds[c.id]);
+      const uncaught = POKEDEX_CREATURES.filter((c) => !SPECIAL_MYTHIC_IDS.includes(c.id) && !state.caughtIds[c.id]);
       if (uncaught.length === 0) {
-        if (!state.caughtIds.c16) {
-          showBanner('🏅', 'All 15 wild & capsule creatures caught! Earn all 5 Official Gym Badges to awaken Legendary #016 Astralux!', 'amber');
+        const missingSpecial = SPECIAL_MYTHIC_IDS.filter((id) => !state.caughtIds[id]);
+        if (missingSpecial.length > 0) {
+          showBanner('🏅', 'All 15 wild & capsule creatures caught! Earn Gym Badges & explore Arena 6 to awaken Astralux, Galaxion & Prismforge!', 'amber');
         } else {
-          showBanner('👑', 'Incredible! Ozias has already caught all 16 creatures in the Living Pokédex!', 'amber');
+          showBanner('👑', `Incredible! Ozias has caught all ${POKEDEX_CREATURES.length} creatures in the Living Pokédex!`, 'amber');
         }
         return;
       }
@@ -3961,9 +4711,1115 @@
       updateHeaderAndHqUI();
       renderPokedexStage();
       renderBattleArena();
+      if (typeof populateFusionPickers === 'function') populateFusionPickers();
       playSound('fanfare');
       spawnConfetti(70);
       showBanner('🎁', `MYSTERY CAPSULE OPENED! You discovered ${prize.dexNum} ${prize.displayName || prize.name}!`, 'amber');
+    });
+
+    // =====================================================
+    // 12B. STAGE 6: COSMIC POKÉ-RADAR & MEGA-FUSION LAB
+    // =====================================================
+    const radarCanvas = document.getElementById('radarCanvas');
+    const radarCtx = radarCanvas.getContext('2d');
+    const radar = {
+      minCoord: 0,
+      maxCoord: 8,
+      signalNum: 1,
+      totalSignals: 5,
+      target: { x: 6, y: 7 },
+      topic: '',
+      prompt: '',
+      hint: '',
+      helpers: [], // Optional visual beacons: { x, y, label, color, connectToPrev }
+      discovered: [], // Discovered constellation stars in this 5-signal expedition
+      pings: [], // Expanding sonar ripples: { x, y, r, maxR, alpha, color, targetX, targetY }
+      hoverCell: null,
+      sweepAngle: 0,
+      animId: null,
+      lastTime: 0
+    };
+
+    function updateCosmicHeaderStats() {
+      const pill = document.getElementById('cosmicStatsPill');
+      if (pill) {
+        pill.textContent = `🛸 Expeditions: ${state.radarMissionsWon} • 🧬 Fusions: ${state.fusionsForged}`;
+      }
+      const turnEl = document.getElementById('radarTurnTag');
+      if (turnEl) {
+        turnEl.textContent = state.coopMode
+          ? `🤝 ${state.currentPlayerTurn}'s Radar Scan (Tip: Split X & Y!)`
+          : `🧢 Ozias's Radar Scan`;
+      }
+    }
+
+    function switchCosmicSubMode(sub) {
+      state.cosmicSubMode = sub;
+      ['radar', 'fusion'].forEach((m) => {
+        document.getElementById(`cosmicSub-${m}`).classList.toggle('hidden', m !== sub);
+      });
+      document.querySelectorAll('.cosmic-sub-btn').forEach((btn) => {
+        const active = btn.getAttribute('data-cosmic-sub') === sub;
+        btn.className = active
+          ? 'cosmic-sub-btn px-4 py-2 rounded-xl text-xs font-extrabold bg-cyan-400 text-slate-950 transition shadow'
+          : 'cosmic-sub-btn px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-800 text-slate-200 hover:bg-slate-700 transition';
+      });
+      if (sub === 'radar') {
+        setTimeout(() => {
+          resizeRadarCanvas();
+          if (state.activeTab === 'cosmic') startRadarAnim();
+        }, 40);
+      } else {
+        stopRadarAnim();
+        populateFusionPickers();
+        renderFusionUI();
+      }
+    }
+
+    document.querySelectorAll('.cosmic-sub-btn').forEach((btn) => {
+      btn.addEventListener('click', () => switchCosmicSubMode(btn.getAttribute('data-cosmic-sub')));
+    });
+
+    function getRadarBoundsForGrade(grade) {
+      if (grade <= 3) return { min: 0, max: 8, label: '📡 Quadrant I Grid (0 to 8)' };
+      if (grade <= 5) return { min: 0, max: 10, label: '📡 Quadrant I Grid (0 to 10)' };
+      return { min: -5, max: 5, label: '🌌 4-Quadrant Cosmic Plane (−5 to +5)' };
+    }
+
+    function makeSimpleExprForValue(val, grade) {
+      if (grade <= 3) {
+        const forms = [];
+        if (val >= 2 && val <= 8) {
+          const d = randInt(2, 5);
+          forms.push(`${val * d} ÷ ${d}`);
+        }
+        if (val % 2 === 0 && val >= 4) forms.push(`2 × ${val / 2}`);
+        if (val % 3 === 0 && val >= 3) forms.push(`3 × ${val / 3}`);
+        const sub = randInt(3, 9);
+        forms.push(`${val + sub} − ${sub}`);
+        if (val >= 3) {
+          const a = randInt(1, val - 1);
+          forms.push(`${a} + ${val - a}`);
+        }
+        return forms[randInt(0, forms.length - 1)];
+      }
+      if (grade === 4) {
+        const d = randInt(4, 11);
+        if (Math.random() < 0.65 && val >= 2) {
+          return `${val * d} ÷ ${d}`;
+        }
+        const sub = randInt(12, 29);
+        return `${val + sub} − ${sub}`;
+      }
+      if (grade === 5) {
+        // PEMDAS expression evaluating cleanly to val (2..10)
+        if (val >= 5 && Math.random() < 0.6) {
+          const b = 2;
+          const c = randInt(2, Math.floor((val - 1) / 2));
+          const a = val - b * c;
+          return `${a} + ${b} × ${c}`;
+        }
+        const mult = [4, 5, 2][randInt(0, 2)];
+        const pct = mult === 4 ? 25 : mult === 5 ? 20 : 50;
+        return `${pct}% of ${val * mult}`;
+      }
+      // Grade 6: Negative integer expression evaluating to val (-5..5)
+      const shift = randInt(4, 10);
+      const base = val - shift;
+      if (base < 0) return `(${base}) + ${shift}`;
+      return `${val + shift} − ${shift}`;
+    }
+
+    function pickDistinctRadarTarget(min, max, avoidList) {
+      for (let tries = 0; tries < 40; tries++) {
+        const x = randInt(min, max);
+        const y = randInt(min, max);
+        if (!avoidList.some((p) => p.x === x && p.y === y)) {
+          return { x, y };
+        }
+      }
+      return { x: randInt(min, max), y: randInt(min, max) };
+    }
+
+    function generateRadarSignal() {
+      const grade = getEffectiveNumericGrade();
+      const bounds = getRadarBoundsForGrade(grade);
+      radar.minCoord = bounds.min;
+      radar.maxCoord = bounds.max;
+      document.getElementById('radarGridModeBadge').textContent = bounds.label;
+
+      const avoid = [...radar.discovered, radar.target];
+      const isBoss = radar.signalNum === radar.totalSignals;
+      let tx = 4;
+      let ty = 4;
+      let topic = '';
+      let prompt = '';
+      let hint = '';
+      let helpers = [];
+
+      if (grade <= 3) {
+        const mode = randInt(1, 2);
+        if (mode === 1) {
+          const pt = pickDistinctRadarTarget(1, 8, avoid);
+          tx = pt.x; ty = pt.y;
+          const exprX = makeSimpleExprForValue(tx, 3);
+          const exprY = makeSimpleExprForValue(ty, 3);
+          topic = isBoss ? '👑 Lv.30 Boss Signal Decoding' : '📡 Lv.30 Star-Signal Decoding';
+          prompt = `Decode Coordinates:  X = ${exprX},   Y = ${exprY}`;
+          hint = `💡 Solve X first (${exprX}) to see how far RIGHT to go on the bottom axis, then solve Y (${exprY}) to climb UP!`;
+        } else {
+          const sx = randInt(1, 6);
+          const sy = randInt(1, 6);
+          const dx = randInt(1, 8 - sx) * (sx >= 5 && Math.random() < 0.5 ? -1 : 1);
+          const dy = randInt(1, 8 - sy) * (sy >= 5 && Math.random() < 0.5 ? -1 : 1);
+          tx = Math.min(8, Math.max(0, sx + dx));
+          ty = Math.min(8, Math.max(0, sy + dy));
+          const realDx = tx - sx;
+          const realDy = ty - sy;
+          helpers = [{ x: sx, y: sy, label: `START (${sx},${sy})`, color: '#38bdf8' }];
+          topic = isBoss ? '👑 Lv.30 Boss Flight Vector' : '🧭 Lv.30 Sky-Compass Hop';
+          prompt = `Start at Beacon (${sx}, ${sy}). Fly ${Math.abs(realDx)} ${realDx >= 0 ? 'East (→)' : 'West (←)'} and ${Math.abs(realDy)} ${realDy >= 0 ? 'North (↑)' : 'South (↓)'}!`;
+          hint = `💡 East adds to X, West subtracts from X. North adds to Y, South subtracts from Y! Start at (${sx}, ${sy}).`;
+        }
+      } else if (grade === 4) {
+        const mode = randInt(1, 3);
+        if (mode === 1) {
+          const pt = pickDistinctRadarTarget(2, 10, avoid);
+          tx = pt.x; ty = pt.y;
+          const exprX = makeSimpleExprForValue(tx, 4);
+          const exprY = makeSimpleExprForValue(ty, 4);
+          topic = isBoss ? '👑 Lv.40 Boss Fact Coordinates' : '📡 Lv.40 Cascade Signal Lock';
+          prompt = `Decode Coordinates:  X = ${exprX},   Y = ${exprY}`;
+          hint = `💡 Use your 12×12 fact families! Solve X = ${exprX} (across) and Y = ${exprY} (up)!`;
+        } else if (mode === 2) {
+          const x1 = randInt(1, 5);
+          const x2 = randInt(x1 + 2, 9);
+          const y1 = randInt(1, 5);
+          const y2 = randInt(y1 + 2, 9);
+          const corners = [
+            { x: x1, y: y1 }, { x: x2, y: y1 },
+            { x: x2, y: y2 }, { x: x1, y: y2 }
+          ];
+          const hiddenIdx = randInt(0, 3);
+          tx = corners[hiddenIdx].x;
+          ty = corners[hiddenIdx].y;
+          const shown = corners.filter((_, idx) => idx !== hiddenIdx);
+          helpers = shown.map((c, idx) => ({ x: c.x, y: c.y, label: `C${idx + 1}`, color: '#fbbf24' }));
+          topic = isBoss ? '👑 Lv.40 Boss Shield Blueprint' : '📐 Lv.40 Force-Field Rectangle';
+          prompt = `A shield rectangle has 3 corners at (${shown[0].x},${shown[0].y}), (${shown[1].x},${shown[1].y}), and (${shown[2].x},${shown[2].y}). Ping the 4th corner!`;
+          hint = `💡 Opposite sides of a rectangle share the same X and Y lines! Look for the missing alignment on the grid!`;
+        } else {
+          const sx = randInt(3, 8);
+          const sy = randInt(3, 8);
+          const dx = randInt(-3, 2) || 2;
+          const dy = randInt(-3, 2) || -2;
+          tx = Math.min(10, Math.max(0, sx + dx));
+          ty = Math.min(10, Math.max(0, sy + dy));
+          const realDx = tx - sx;
+          const realDy = ty - sy;
+          helpers = [{ x: sx, y: sy, label: `BASE (${sx},${sy})`, color: '#38bdf8' }];
+          topic = isBoss ? '👑 Lv.40 Boss Vector Jump' : '🧭 Lv.40 Vector Navigation';
+          prompt = `Launch from Base (${sx}, ${sy}). Move ${Math.abs(realDx)} ${realDx >= 0 ? 'East (→)' : 'West (←)'} and ${Math.abs(realDy)} ${realDy >= 0 ? 'North (↑)' : 'South (↓)'}!`;
+          hint = `💡 Calculate X = ${sx} ${realDx >= 0 ? '+' : '−'} ${Math.abs(realDx)}, and Y = ${sy} ${realDy >= 0 ? '+' : '−'} ${Math.abs(realDy)}!`;
+        }
+      } else if (grade === 5) {
+        const mode = randInt(1, 2);
+        if (mode === 1) {
+          const pt = pickDistinctRadarTarget(2, 10, avoid);
+          tx = pt.x; ty = pt.y;
+          const exprX = makeSimpleExprForValue(tx, 5);
+          const exprY = makeSimpleExprForValue(ty, 5);
+          topic = isBoss ? '👑 Lv.50 Boss PEMDAS Signal' : '⚡ Lv.50 PEMDAS & Percent Lock';
+          prompt = `Decode Coordinates:  X = ${exprX},   Y = ${exprY}`;
+          hint = `💡 Remember Order of Operations (multiply before adding) and percent benchmarks (25% = 1/4, 50% = 1/2)!`;
+        } else {
+          const hx = randInt(2, 8);
+          const hy = randInt(2, 8);
+          const spanX = randInt(1, Math.min(hx, 10 - hx));
+          const spanY = randInt(1, Math.min(hy, 10 - hy));
+          const x1 = hx - spanX; const x2 = hx + spanX;
+          const y1 = hy - spanY; const y2 = hy + spanY;
+          tx = hx; ty = hy;
+          helpers = [
+            { x: x1, y: y1, label: `A (${x1},${y1})`, color: '#f472b6' },
+            { x: x2, y: y2, label: `B (${x2},${y2})`, color: '#38bdf8', connectToPrev: true }
+          ];
+          topic = isBoss ? '👑 Lv.50 Boss Midpoint Relay' : '✨ Lv.50 Star-Bridge Midpoint';
+          prompt = `Find the exact MIDPOINT halfway between Star A (${x1}, ${y1}) and Star B (${x2}, ${y2})!`;
+          hint = `💡 Midpoint Trick: Average the X coordinates (${x1} + ${x2}) ÷ 2, and average the Y coordinates (${y1} + ${y2}) ÷ 2!`;
+        }
+      } else {
+        // Grade 6+: Full 4-Quadrant Cosmic Plane (-5 to +5)
+        const mode = randInt(1, 3);
+        if (mode === 1) {
+          const pt = pickDistinctRadarTarget(-5, 5, avoid);
+          tx = pt.x === 0 ? -3 : pt.x;
+          ty = pt.y;
+          const exprX = makeSimpleExprForValue(tx, 6);
+          const exprY = makeSimpleExprForValue(ty, 6);
+          topic = isBoss ? '👑 Lv.60+ Boss 4-Quadrant Lock' : '🌌 Lv.60+ Negative Integer Radar';
+          prompt = `4-Quadrant Signal:  X = ${exprX},   Y = ${exprY}`;
+          hint = `💡 On the 4-Quadrant grid, negative X goes LEFT of 0 and negative Y goes BELOW 0!`;
+        } else if (mode === 2) {
+          const bx = (randInt(1, 5)) * (Math.random() < 0.5 ? 1 : -1);
+          const by = (randInt(1, 5)) * (Math.random() < 0.5 ? 1 : -1);
+          const acrossY = Math.random() < 0.5;
+          tx = acrossY ? -bx : bx;
+          ty = acrossY ? by : -by;
+          helpers = [{ x: bx, y: by, label: `BEACON (${bx},${by})`, color: '#f472b6' }];
+          topic = isBoss ? '👑 Lv.60+ Boss Mirror Warp' : '🪞 Lv.60+ Coordinate Reflection';
+          prompt = `Reflect Beacon (${bx}, ${by}) across the ${acrossY ? 'Y-axis (vertical mirror)' : 'X-axis (horizontal mirror)'}!`;
+          hint = acrossY
+            ? `💡 Reflecting across the Y-axis flips the sign of X while keeping Y the exact same!`
+            : `💡 Reflecting across the X-axis flips the sign of Y while keeping X the exact same!`;
+        } else {
+          tx = randInt(-4, 4);
+          ty = randInt(-4, 4);
+          if (tx === 0 && ty === 0) tx = -2;
+          const a1 = 2; const b1 = randInt(3, 8); const rhs1 = a1 * tx + b1;
+          const a2 = 3; const b2 = randInt(2, 7); const rhs2 = a2 * ty - b2;
+          topic = isBoss ? '👑 Lv.60+ Boss Algebra Warp' : '🔮 Lv.60+ Two-Step Algebra Radar';
+          prompt = `Solve for (X, Y):  ${a1}X + ${b1} = ${rhs1}   &   ${a2}Y − ${b2} = ${rhs2}`;
+          hint = `💡 Isolate X: (${rhs1} − ${b1}) ÷ ${a1}. Isolate Y: (${rhs2} + ${b2}) ÷ ${a2}!`;
+        }
+      }
+
+      radar.target = { x: tx, y: ty };
+      radar.topic = topic;
+      radar.prompt = prompt;
+      radar.hint = hint;
+      radar.helpers = helpers;
+
+      document.getElementById('radarMissionTopic').textContent = topic;
+      document.getElementById('radarMissionPrompt').textContent = prompt;
+      const hintBox = document.getElementById('radarHintBox');
+      hintBox.classList.add('hidden');
+      hintBox.textContent = hint;
+      document.getElementById('radarInputX').value = '';
+      document.getElementById('radarInputY').value = '';
+      document.getElementById('radarInputX').min = String(radar.minCoord);
+      document.getElementById('radarInputX').max = String(radar.maxCoord);
+      document.getElementById('radarInputY').min = String(radar.minCoord);
+      document.getElementById('radarInputY').max = String(radar.maxCoord);
+
+      renderRadarStarsRow();
+      drawRadarFrame();
+    }
+
+    function renderRadarStarsRow() {
+      const row = document.getElementById('radarStarsRow');
+      const prog = document.getElementById('radarProgressText');
+      if (prog) prog.textContent = `Signal ${radar.signalNum} / ${radar.totalSignals}`;
+      if (!row) return;
+      row.innerHTML = '';
+      for (let i = 1; i <= radar.totalSignals; i++) {
+        const done = i <= radar.discovered.length;
+        const active = i === radar.signalNum;
+        const isBoss = i === radar.totalSignals;
+        const el = document.createElement('div');
+        el.className = done
+          ? 'py-1.5 rounded-xl bg-emerald-500/25 border border-emerald-400 text-emerald-200 text-center text-xs font-extrabold'
+          : active
+          ? 'py-1.5 rounded-xl bg-cyan-500/25 border-2 border-cyan-400 text-cyan-200 text-center text-xs font-extrabold'
+          : 'py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-500 text-center text-xs font-bold';
+        el.textContent = done ? '⭐' : isBoss ? '👑' : `#${i}`;
+        row.appendChild(el);
+      }
+    }
+
+    function resetRadarExpeditionForGrade() {
+      radar.signalNum = 1;
+      radar.discovered = [];
+      radar.pings = [];
+      radar.hoverCell = null;
+      document.getElementById('radarEchoBox').textContent = '📡 Radar Recalibrated for your active Grade Dial! Tap any intersection to scan!';
+      generateRadarSignal();
+    }
+
+    function getRadarLayoutMetrics() {
+      const size = Math.min(radarCanvas.width, radarCanvas.height);
+      const pad = Math.round(size * 0.11);
+      const gridPx = size - pad * 2;
+      const steps = radar.maxCoord - radar.minCoord;
+      const stepPx = gridPx / steps;
+      return { size, pad, gridPx, steps, stepPx };
+    }
+
+    function coordToRadarPx(cx, cy) {
+      const { pad, stepPx } = getRadarLayoutMetrics();
+      const px = pad + (cx - radar.minCoord) * stepPx;
+      const py = pad + (radar.maxCoord - cy) * stepPx;
+      return { px, py };
+    }
+
+    function pxToRadarCoord(px, py) {
+      const { pad, stepPx } = getRadarLayoutMetrics();
+      const cx = Math.round((px - pad) / stepPx + radar.minCoord);
+      const cy = Math.round(radar.maxCoord - (py - pad) / stepPx);
+      if (cx < radar.minCoord || cx > radar.maxCoord || cy < radar.minCoord || cy > radar.maxCoord) {
+        return null;
+      }
+      return { x: cx, y: cy };
+    }
+
+    function resizeRadarCanvas() {
+      const rect = radarCanvas.parentElement.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      const side = Math.max(260, Math.round(Math.min(rect.width, rect.height)));
+      if (radarCanvas.width !== side || radarCanvas.height !== side) {
+        radarCanvas.width = side;
+        radarCanvas.height = side;
+      }
+      drawRadarFrame();
+    }
+    window.addEventListener('resize', resizeRadarCanvas);
+
+    function drawRadarFrame() {
+      const w = radarCanvas.width;
+      const h = radarCanvas.height;
+      if (!w || !h) return;
+      const { pad, gridPx, steps, stepPx } = getRadarLayoutMetrics();
+      radarCtx.clearRect(0, 0, w, h);
+
+      // Deep space background
+      const bg = radarCtx.createRadialGradient(w / 2, h / 2, 10, w / 2, h / 2, w * 0.65);
+      bg.addColorStop(0, '#0c2442');
+      bg.addColorStop(1, '#020617');
+      radarCtx.fillStyle = bg;
+      radarCtx.fillRect(0, 0, w, h);
+
+      // Concentric radar range rings
+      const originPt = radar.minCoord < 0 ? coordToRadarPx(0, 0) : { px: w / 2, py: h / 2 };
+      radarCtx.strokeStyle = 'rgba(34, 211, 238, 0.14)';
+      radarCtx.lineWidth = 1.2;
+      [0.22, 0.44, 0.66, 0.88].forEach((frac) => {
+        radarCtx.beginPath();
+        radarCtx.arc(originPt.px, originPt.py, (gridPx / 2) * frac, 0, Math.PI * 2);
+        radarCtx.stroke();
+      });
+
+      // Rotating neon radar sweep cone
+      radarCtx.save();
+      radarCtx.beginPath();
+      radarCtx.rect(pad, pad, gridPx, gridPx);
+      radarCtx.clip();
+      radarCtx.translate(originPt.px, originPt.py);
+      radarCtx.rotate(radar.sweepAngle);
+      const sweepGrad = radarCtx.createRadialGradient(0, 0, 5, 0, 0, gridPx * 0.85);
+      sweepGrad.addColorStop(0, 'rgba(34, 211, 238, 0.24)');
+      sweepGrad.addColorStop(1, 'rgba(34, 211, 238, 0.02)');
+      radarCtx.fillStyle = sweepGrad;
+      radarCtx.beginPath();
+      radarCtx.moveTo(0, 0);
+      radarCtx.arc(0, 0, gridPx * 0.9, -0.35, 0);
+      radarCtx.closePath();
+      radarCtx.fill();
+      radarCtx.strokeStyle = 'rgba(34, 211, 238, 0.55)';
+      radarCtx.lineWidth = 2;
+      radarCtx.beginPath();
+      radarCtx.moveTo(0, 0);
+      radarCtx.lineTo(gridPx * 0.9, 0);
+      radarCtx.stroke();
+      radarCtx.restore();
+
+      // Grid lines & coordinate numbers
+      radarCtx.font = `bold ${Math.max(10, Math.round(w * 0.028))}px Inter, sans-serif`;
+      radarCtx.textAlign = 'center';
+      radarCtx.textBaseline = 'middle';
+
+      for (let i = 0; i <= steps; i++) {
+        const val = radar.minCoord + i;
+        const xPos = pad + i * stepPx;
+        const yPos = pad + (steps - i) * stepPx;
+        const isZeroAxis = val === 0;
+
+        // Vertical grid line
+        radarCtx.strokeStyle = isZeroAxis ? 'rgba(56, 189, 248, 0.85)' : 'rgba(56, 189, 248, 0.22)';
+        radarCtx.lineWidth = isZeroAxis ? 2.5 : 1;
+        radarCtx.beginPath();
+        radarCtx.moveTo(xPos, pad);
+        radarCtx.lineTo(xPos, pad + gridPx);
+        radarCtx.stroke();
+
+        // Horizontal grid line
+        radarCtx.strokeStyle = isZeroAxis ? 'rgba(250, 204, 21, 0.85)' : 'rgba(56, 189, 248, 0.22)';
+        radarCtx.lineWidth = isZeroAxis ? 2.5 : 1;
+        radarCtx.beginPath();
+        radarCtx.moveTo(pad, yPos);
+        radarCtx.lineTo(pad + gridPx, yPos);
+        radarCtx.stroke();
+
+        // Axis tick labels
+        radarCtx.fillStyle = isZeroAxis ? '#ffffff' : '#67e8f9';
+        radarCtx.fillText(String(val), xPos, pad + gridPx + Math.round(pad * 0.45));
+        radarCtx.fillStyle = isZeroAxis ? '#ffffff' : '#fde047';
+        radarCtx.fillText(String(val), pad - Math.round(pad * 0.45), yPos);
+      }
+
+      // Axis names (X & Y)
+      radarCtx.font = `800 ${Math.max(11, Math.round(w * 0.032))}px Fredoka, sans-serif`;
+      radarCtx.fillStyle = '#38bdf8';
+      radarCtx.fillText('X →', pad + gridPx + Math.round(pad * 0.42), pad + gridPx);
+      radarCtx.fillStyle = '#facc15';
+      radarCtx.fillText('↑ Y', pad, Math.max(12, pad * 0.4));
+
+      // Discovered Constellation Trail
+      if (radar.discovered.length > 0) {
+        radarCtx.save();
+        radarCtx.strokeStyle = 'rgba(250, 204, 21, 0.55)';
+        radarCtx.lineWidth = 2;
+        radarCtx.setLineDash([5, 4]);
+        radarCtx.beginPath();
+        radar.discovered.forEach((pt, idx) => {
+          const { px, py } = coordToRadarPx(pt.x, pt.y);
+          if (idx === 0) radarCtx.moveTo(px, py);
+          else radarCtx.lineTo(px, py);
+        });
+        radarCtx.stroke();
+        radarCtx.restore();
+
+        radar.discovered.forEach((pt) => {
+          const { px, py } = coordToRadarPx(pt.x, pt.y);
+          radarCtx.beginPath();
+          radarCtx.arc(px, py, 7, 0, Math.PI * 2);
+          radarCtx.fillStyle = '#facc15';
+          radarCtx.fill();
+          radarCtx.strokeStyle = '#ffffff';
+          radarCtx.lineWidth = 2;
+          radarCtx.stroke();
+        });
+      }
+
+      // Mission Helper Beacons (Start point, Midpoint stars, Rectangle corners, Reflection beacon)
+      if (radar.helpers.length > 0) {
+        radar.helpers.forEach((hlp, idx) => {
+          const { px, py } = coordToRadarPx(hlp.x, hlp.y);
+          if (hlp.connectToPrev && idx > 0) {
+            const prev = coordToRadarPx(radar.helpers[idx - 1].x, radar.helpers[idx - 1].y);
+            radarCtx.save();
+            radarCtx.strokeStyle = 'rgba(244, 114, 182, 0.65)';
+            radarCtx.lineWidth = 2;
+            radarCtx.setLineDash([4, 4]);
+            radarCtx.beginPath();
+            radarCtx.moveTo(prev.px, prev.py);
+            radarCtx.lineTo(px, py);
+            radarCtx.stroke();
+            radarCtx.restore();
+          }
+          radarCtx.beginPath();
+          radarCtx.arc(px, py, 8, 0, Math.PI * 2);
+          radarCtx.fillStyle = hlp.color || '#38bdf8';
+          radarCtx.fill();
+          radarCtx.strokeStyle = '#ffffff';
+          radarCtx.lineWidth = 2;
+          radarCtx.stroke();
+
+          radarCtx.font = 'bold 10px Inter, sans-serif';
+          radarCtx.fillStyle = '#ffffff';
+          radarCtx.fillText(hlp.label, px, py - 14);
+        });
+      }
+
+      // Animated Sonar Ping Ripples
+      radar.pings.forEach((ping) => {
+        const { px, py } = coordToRadarPx(ping.x, ping.y);
+        radarCtx.save();
+        radarCtx.globalAlpha = Math.max(0, ping.alpha);
+        radarCtx.strokeStyle = ping.color;
+        radarCtx.lineWidth = 3;
+        radarCtx.beginPath();
+        radarCtx.arc(px, py, ping.r, 0, Math.PI * 2);
+        radarCtx.stroke();
+        radarCtx.fillStyle = ping.color;
+        radarCtx.beginPath();
+        radarCtx.arc(px, py, 5, 0, Math.PI * 2);
+        radarCtx.fill();
+        radarCtx.restore();
+      });
+
+      // Live Hover Targeting Reticle
+      if (radar.hoverCell) {
+        const { px, py } = coordToRadarPx(radar.hoverCell.x, radar.hoverCell.y);
+        radarCtx.strokeStyle = '#facc15';
+        radarCtx.lineWidth = 2;
+        radarCtx.beginPath();
+        radarCtx.arc(px, py, 11, 0, Math.PI * 2);
+        radarCtx.stroke();
+        radarCtx.beginPath();
+        radarCtx.moveTo(px - 16, py); radarCtx.lineTo(px - 6, py);
+        radarCtx.moveTo(px + 6, py); radarCtx.lineTo(px + 16, py);
+        radarCtx.moveTo(px, py - 16); radarCtx.lineTo(px, py - 6);
+        radarCtx.moveTo(px, py + 6); radarCtx.lineTo(px, py + 16);
+        radarCtx.stroke();
+      }
+    }
+
+    function stepRadarAnim(timestamp) {
+      if (state.activeTab !== 'cosmic' || state.cosmicSubMode !== 'radar') {
+        radar.animId = null;
+        return;
+      }
+      const now = typeof timestamp === 'number' ? timestamp : performance.now();
+      const dt = radar.lastTime ? Math.min(0.05, Math.max(0.001, (now - radar.lastTime) / 1000)) : 1 / 60;
+      radar.lastTime = now;
+
+      radar.sweepAngle = (radar.sweepAngle + dt * 1.15) % (Math.PI * 2);
+      radar.pings.forEach((p) => {
+        p.r += dt * 75;
+        p.alpha -= dt * 1.1;
+      });
+      radar.pings = radar.pings.filter((p) => p.alpha > 0.02);
+
+      drawRadarFrame();
+      radar.animId = requestAnimationFrame(stepRadarAnim);
+    }
+
+    function startRadarAnim() {
+      if (radar.animId) return;
+      radar.lastTime = 0;
+      radar.animId = requestAnimationFrame(stepRadarAnim);
+    }
+
+    function stopRadarAnim() {
+      if (radar.animId) {
+        cancelAnimationFrame(radar.animId);
+        radar.animId = null;
+      }
+      radar.lastTime = 0;
+    }
+
+    function evaluateRadarPing(gx, gy) {
+      if (gx < radar.minCoord || gx > radar.maxCoord || gy < radar.minCoord || gy > radar.maxCoord) {
+        playSound('oops');
+        showBanner('📡', `Coordinates must be between ${radar.minCoord} and ${radar.maxCoord}!`, 'amber');
+        return;
+      }
+      const tx = radar.target.x;
+      const ty = radar.target.y;
+
+      if (gx === tx && gy === ty) {
+        radar.pings.push({ x: gx, y: gy, r: 6, alpha: 1, color: '#34d399' });
+        radar.discovered.push({ x: tx, y: ty });
+        playSound('radar');
+
+        if (radar.signalNum >= radar.totalSignals) {
+          // 5/5 Constellation Expedition Complete!
+          state.radarMissionsWon += 1;
+          spawnConfetti(90);
+          const rewardInfo = grantRewards(50, 50, `COSMIC CONSTELLATION COMPLETE! Locked onto Boss Signal (${tx}, ${ty})!`);
+          const prefix = rewardInfo.evolvedTo
+            ? `Constellation Complete! ✨ Partner evolved into ${rewardInfo.evolvedTo}!`
+            : `5-Signal Cosmic Expedition Complete!`;
+          unlockBadge('cosmic', 'Cosmic Star-Chart Badge', prefix);
+          saveState();
+          updateCosmicHeaderStats();
+          document.getElementById('radarEchoBox').textContent = `🌟 Expedition #${state.radarMissionsWon} Complete! Starting a fresh 5-Signal Star-Chart!`;
+          radar.signalNum = 1;
+          radar.discovered = [];
+          generateRadarSignal();
+        } else {
+          const foundNum = radar.signalNum;
+          radar.signalNum += 1;
+          grantRewards(25, 25, `Signal #${foundNum} Locked at (${tx}, ${ty})!`);
+          updateCosmicHeaderStats();
+          document.getElementById('radarEchoBox').textContent = `✅ Direct Signal Lock at (${tx}, ${ty})! Decoding Signal #${radar.signalNum} of ${radar.totalSignals}...`;
+          generateRadarSignal();
+        }
+      } else {
+        radar.pings.push({ x: gx, y: gy, r: 6, alpha: 1, color: '#fb7185' });
+        playSound('oops');
+        const dx = tx - gx;
+        const dy = ty - gy;
+        const dirs = [];
+        if (dx > 0) dirs.push(`${dx} unit${dx === 1 ? '' : 's'} EAST (right, higher X)`);
+        else if (dx < 0) dirs.push(`${Math.abs(dx)} unit${dx === -1 ? '' : 's'} WEST (left, lower X)`);
+        else dirs.push('X is dead-on!');
+
+        if (dy > 0) dirs.push(`${dy} unit${dy === 1 ? '' : 's'} NORTH (up, higher Y)`);
+        else if (dy < 0) dirs.push(`${Math.abs(dy)} unit${dy === -1 ? '' : 's'} SOUTH (down, lower Y)`);
+        else dirs.push('Y is dead-on!');
+
+        const echoMsg = `📡 Radar Echo from (${gx}, ${gy}): ${dirs.join(' • ')}`;
+        document.getElementById('radarEchoBox').textContent = echoMsg;
+        showBanner('🧭', echoMsg, 'amber');
+      }
+      drawRadarFrame();
+    }
+
+    function getRadarPointerCell(e) {
+      const rect = radarCanvas.getBoundingClientRect();
+      const px = ((e.clientX - rect.left) / rect.width) * radarCanvas.width;
+      const py = ((e.clientY - rect.top) / rect.height) * radarCanvas.height;
+      return pxToRadarCoord(px, py);
+    }
+
+    radarCanvas.addEventListener('pointermove', (e) => {
+      const cell = getRadarPointerCell(e);
+      radar.hoverCell = cell;
+      document.getElementById('radarHoverCoords').textContent = cell
+        ? `Target Lock: ( ${cell.x} , ${cell.y} )`
+        : 'Target Lock: ( — , — )';
+      if (!radar.animId) drawRadarFrame();
+    });
+
+    radarCanvas.addEventListener('pointerleave', () => {
+      radar.hoverCell = null;
+      document.getElementById('radarHoverCoords').textContent = 'Target Lock: ( — , — )';
+      if (!radar.animId) drawRadarFrame();
+    });
+
+    radarCanvas.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      const cell = getRadarPointerCell(e);
+      if (cell) {
+        radar.hoverCell = cell;
+        document.getElementById('radarHoverCoords').textContent = `Target Lock: ( ${cell.x} , ${cell.y} )`;
+        evaluateRadarPing(cell.x, cell.y);
+      }
+    });
+
+    function submitManualRadarPing() {
+      const rx = document.getElementById('radarInputX').value.trim();
+      const ry = document.getElementById('radarInputY').value.trim();
+      if (rx === '' || ry === '') {
+        playSound('oops');
+        showBanner('📡', 'Enter both X and Y coordinates (or tap directly on the glowing radar grid)!', 'amber');
+        return;
+      }
+      const gx = parseInt(rx, 10);
+      const gy = parseInt(ry, 10);
+      if (Number.isNaN(gx) || Number.isNaN(gy)) return;
+      evaluateRadarPing(gx, gy);
+    }
+
+    document.getElementById('radarPingSubmitBtn').addEventListener('click', submitManualRadarPing);
+    document.getElementById('radarInputX').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); document.getElementById('radarInputY').focus(); }
+    });
+    document.getElementById('radarInputY').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); submitManualRadarPing(); }
+    });
+    document.getElementById('radarHintBtn').addEventListener('click', () => {
+      document.getElementById('radarHintBox').classList.remove('hidden');
+      playSound('attack');
+    });
+    document.getElementById('radarNewSignalBtn').addEventListener('click', () => {
+      playSound('radar');
+      generateRadarSignal();
+    });
+    document.getElementById('speakRadarBtn').addEventListener('click', () => {
+      speakText(radar.prompt);
+    });
+
+    // -----------------------------------------------------
+    // SUB-MODE 6B: MEGA-FUSION EQUATION FORGE (POKÉ-ALCHEMY)
+    // -----------------------------------------------------
+    const fusion = {
+      idA: 'c1',
+      idB: 'c2',
+      target: 24,
+      initialCrystals: [3, 4, 2],
+      crystals: [], // { id, val }
+      steps: [],
+      history: [],
+      solutionSteps: [],
+      selectedIdxA: null,
+      selectedOp: null,
+      nextCrystalId: 1
+    };
+
+    function opSymbol(op) {
+      return op === '*' ? '×' : op === '/' ? '÷' : op === '-' ? '−' : '+';
+    }
+
+    function populateFusionPickers() {
+      const selA = document.getElementById('fusionSelectA');
+      const selB = document.getElementById('fusionSelectB');
+      if (!selA || !selB) return;
+
+      const caughtList = POKEDEX_CREATURES.filter((c) => !!state.caughtIds[c.id]);
+      if (caughtList.length === 0) return;
+
+      if (!caughtList.some((c) => c.id === fusion.idA)) fusion.idA = caughtList[0].id;
+      if (!caughtList.some((c) => c.id === fusion.idB)) fusion.idB = caughtList[Math.min(1, caughtList.length - 1)].id;
+
+      [selA, selB].forEach((sel, which) => {
+        sel.innerHTML = '';
+        caughtList.forEach((c) => {
+          const opt = document.createElement('option');
+          opt.value = c.id;
+          opt.textContent = `${c.dexNum} ${c.displayName || c.name} (${c.type})`;
+          sel.appendChild(opt);
+        });
+        sel.value = which === 0 ? fusion.idA : fusion.idB;
+      });
+      renderFusionPreview();
+      renderFusionGallery();
+    }
+
+    function renderFusionPreview() {
+      const cA = getCreatureById(fusion.idA);
+      const cB = getCreatureById(fusion.idB);
+      const name = getFusionName(cA.displayName || cA.name, cB.displayName || cB.name);
+
+      document.getElementById('fusionMiniSvgA').innerHTML = renderCreatureSvg(cA.id, cA.color, 'w-10 h-10');
+      document.getElementById('fusionMiniSvgB').innerHTML = renderCreatureSvg(cB.id, cB.color, 'w-10 h-10');
+      document.getElementById('fusionPreviewSvg').innerHTML = renderFusionSvg(cA, cB, 'w-20 h-20');
+      document.getElementById('fusionPreviewName').textContent = name;
+      document.getElementById('fusionPreviewTypes').textContent = `${cA.type} × ${cB.type}`;
+      document.getElementById('fusionTargetPower').textContent = String(fusion.target);
+    }
+
+    function tryBuildFusionBlueprint(grade, prevTarget) {
+      const crystalCount = grade <= 3 ? 3 : 4;
+      const minTarget = grade <= 3 ? 10 : grade === 4 ? 14 : grade === 5 ? 18 : 20;
+      const maxTarget = grade <= 3 ? 60 : grade === 4 ? 96 : grade === 5 ? 120 : 144;
+      const maxStart = grade <= 3 ? 9 : grade === 4 ? 10 : 12;
+
+      for (let attempt = 0; attempt < 160; attempt++) {
+        const starts = [];
+        for (let i = 0; i < crystalCount; i++) {
+          starts.push(randInt(2, maxStart));
+        }
+        // Constructively reduce crystals to guarantee an exact integer solution
+        let pool = starts.slice();
+        const solSteps = [];
+        let ok = true;
+
+        while (pool.length > 1) {
+          const iA = randInt(0, pool.length - 1);
+          let iB = randInt(0, pool.length - 1);
+          if (iB === iA) iB = (iA + 1) % pool.length;
+          const a = pool[iA];
+          const b = pool[iB];
+
+          const ops = [];
+          if (a + b <= maxTarget + 24) ops.push({ op: '+', res: a + b, lhs: a, rhs: b });
+          if (a !== b) {
+            const hi = Math.max(a, b);
+            const lo = Math.min(a, b);
+            if (hi - lo >= 1) ops.push({ op: '-', res: hi - lo, lhs: hi, rhs: lo });
+          }
+          if (a * b <= maxTarget + 36 && a > 1 && b > 1) ops.push({ op: '*', res: a * b, lhs: a, rhs: b });
+          if (grade >= 4 && b > 1 && a % b === 0 && a / b >= 2) {
+            ops.push({ op: '/', res: a / b, lhs: a, rhs: b });
+          } else if (grade >= 4 && a > 1 && b % a === 0 && b / a >= 2) {
+            ops.push({ op: '/', res: b / a, lhs: b, rhs: a });
+          }
+
+          if (ops.length === 0) { ok = false; break; }
+          // Prefer multiplication/division on early steps so puzzles are genuinely interesting
+          const weighted = ops.filter((o) => o.op === '*' || o.op === '/');
+          const choice = (weighted.length > 0 && Math.random() < 0.65)
+            ? weighted[randInt(0, weighted.length - 1)]
+            : ops[randInt(0, ops.length - 1)];
+
+          solSteps.push(`${choice.lhs} ${opSymbol(choice.op)} ${choice.rhs} = ${choice.res}`);
+          const nextPool = pool.filter((_, idx) => idx !== iA && idx !== iB);
+          nextPool.push(choice.res);
+          pool = nextPool;
+        }
+
+        const finalVal = pool[0];
+        if (ok && finalVal >= minTarget && finalVal <= maxTarget && finalVal !== prevTarget) {
+          return {
+            initialCrystals: shuffleArray(starts),
+            target: finalVal,
+            solutionSteps: solSteps
+          };
+        }
+      }
+
+      // Guaranteed clean fallback blueprint
+      return grade <= 3
+        ? { initialCrystals: [3, 6, 5], target: 23, solutionSteps: ['3 × 6 = 18', '18 + 5 = 23'] }
+        : { initialCrystals: [4, 6, 3, 2], target: 36, solutionSteps: ['4 × 6 = 24', '24 ÷ 2 = 12', '12 × 3 = 36'] };
+    }
+
+    function resetFusionCrystalsToStart() {
+      fusion.nextCrystalId = 1;
+      fusion.crystals = fusion.initialCrystals.map((v) => ({ id: fusion.nextCrystalId++, val: v }));
+      fusion.steps = [];
+      fusion.history = [];
+      fusion.selectedIdxA = null;
+      fusion.selectedOp = null;
+      document.getElementById('fusionHintBox').classList.add('hidden');
+      renderFusionUI();
+    }
+
+    function generateFusionPuzzle() {
+      const grade = getEffectiveNumericGrade();
+      const bp = tryBuildFusionBlueprint(grade, fusion.target);
+      fusion.initialCrystals = bp.initialCrystals;
+      fusion.target = bp.target;
+      fusion.solutionSteps = bp.solutionSteps;
+      resetFusionCrystalsToStart();
+      renderFusionPreview();
+    }
+
+    function renderFusionUI() {
+      const grade = getEffectiveNumericGrade();
+      document.getElementById('fusionGradeTag').textContent = `⚡ Lv.${grade * 10} (Grade ${grade}) • Combine All ${fusion.initialCrystals.length} Crystals to Hit Target Power ${fusion.target}!`;
+
+      const promptEl = document.getElementById('fusionSelectionPrompt');
+      if (fusion.selectedIdxA === null) {
+        promptEl.textContent = '1) Tap your first Energy Crystal below!';
+      } else if (!fusion.selectedOp) {
+        promptEl.textContent = `2) Crystal [ ${fusion.crystals[fusion.selectedIdxA].val} ] locked! Now tap an Operator (+ − × ÷)!`;
+      } else {
+        promptEl.textContent = `3) Building: ${fusion.crystals[fusion.selectedIdxA].val} ${opSymbol(fusion.selectedOp)} ? — Tap a second Energy Crystal to fuse!`;
+      }
+
+      // Render Energy Crystals
+      const row = document.getElementById('fusionCrystalsRow');
+      row.innerHTML = '';
+      fusion.crystals.forEach((cr, idx) => {
+        const isSel = fusion.selectedIdxA === idx;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = isSel
+          ? 'min-w-[76px] px-5 py-4 rounded-2xl bg-amber-400 text-slate-950 border-2 border-white text-2xl sm:text-3xl font-extrabold game-font shadow-lg -translate-y-1 transition'
+          : 'min-w-[76px] px-5 py-4 rounded-2xl bg-gradient-to-b from-indigo-900 to-slate-900 hover:from-purple-800 hover:to-slate-800 text-white border-2 border-purple-400/70 text-2xl sm:text-3xl font-extrabold game-font shadow transition';
+        btn.textContent = String(cr.val);
+        btn.addEventListener('click', () => handleFusionCrystalClick(idx));
+        row.appendChild(btn);
+      });
+
+      // Highlight selected operator
+      document.querySelectorAll('.fusion-op-btn').forEach((btn) => {
+        const isSel = btn.getAttribute('data-fop') === fusion.selectedOp;
+        btn.className = isSel
+          ? 'fusion-op-btn w-14 h-12 rounded-2xl bg-cyan-400 text-slate-950 border-2 border-white text-2xl font-extrabold game-font shadow transition'
+          : 'fusion-op-btn w-14 h-12 rounded-2xl bg-slate-800 hover:bg-cyan-400 hover:text-slate-950 border-2 border-slate-600 text-2xl font-extrabold text-white game-font transition';
+      });
+
+      // Render Step Chain Log
+      const logEl = document.getElementById('fusionStepsLog');
+      if (fusion.steps.length === 0) {
+        logEl.innerHTML = '<span class="text-slate-500">No crystals merged yet — pick a crystal to begin!</span>';
+      } else {
+        logEl.innerHTML = fusion.steps
+          .map((s, idx) => `<span class="px-2.5 py-1 rounded-xl bg-emerald-500/15 border border-emerald-400/40 text-emerald-200 font-bold">Step ${idx + 1}: ${s}</span>`)
+          .join('');
+      }
+
+      document.getElementById('fusionUndoBtn').disabled = fusion.history.length === 0;
+      document.getElementById('fusionUndoBtn').classList.toggle('opacity-45', fusion.history.length === 0);
+      renderFusionPreview();
+    }
+
+    function handleFusionCrystalClick(idx) {
+      if (fusion.selectedIdxA === null) {
+        fusion.selectedIdxA = idx;
+        playSound('attack');
+        renderFusionUI();
+        return;
+      }
+      if (fusion.selectedIdxA === idx) {
+        fusion.selectedIdxA = null;
+        fusion.selectedOp = null;
+        renderFusionUI();
+        return;
+      }
+      if (!fusion.selectedOp) {
+        // Switch first selected crystal cleanly
+        fusion.selectedIdxA = idx;
+        playSound('attack');
+        renderFusionUI();
+        return;
+      }
+
+      // Perform Crystal Merge!
+      const a = fusion.crystals[fusion.selectedIdxA].val;
+      const b = fusion.crystals[idx].val;
+      const op = fusion.selectedOp;
+      const effGrade = getEffectiveNumericGrade();
+      let res = 0;
+
+      if (op === '+') {
+        res = a + b;
+      } else if (op === '-') {
+        res = a - b;
+        if (effGrade < 6 && res < 0) {
+          playSound('oops');
+          showBanner('🧪', `Try putting the bigger crystal first (${b} − ${a}), or dial up to Grade 6 for negative integers!`, 'amber');
+          fusion.selectedIdxA = null;
+          fusion.selectedOp = null;
+          renderFusionUI();
+          return;
+        }
+      } else if (op === '*') {
+        res = a * b;
+      } else if (op === '/') {
+        if (b === 0 || a % b !== 0) {
+          playSound('oops');
+          showBanner('🧪', `${a} ÷ ${b} leaves a remainder! Division crystals must divide evenly into a whole number!`, 'amber');
+          fusion.selectedIdxA = null;
+          fusion.selectedOp = null;
+          renderFusionUI();
+          return;
+        }
+        res = a / b;
+      }
+
+      // Save undo snapshot
+      fusion.history.push({
+        crystals: fusion.crystals.map((c) => ({ ...c })),
+        steps: fusion.steps.slice()
+      });
+
+      const stepText = `${a} ${opSymbol(op)} ${b} = ${res}`;
+      fusion.steps.push(stepText);
+      const remaining = fusion.crystals.filter((_, i) => i !== fusion.selectedIdxA && i !== idx);
+      remaining.push({ id: fusion.nextCrystalId++, val: res });
+      fusion.crystals = remaining;
+      fusion.selectedIdxA = null;
+      fusion.selectedOp = null;
+
+      // Check completion
+      if (fusion.crystals.length === 1) {
+        if (fusion.crystals[0].val === fusion.target) {
+          const cA = getCreatureById(fusion.idA);
+          const cB = getCreatureById(fusion.idB);
+          const hybridName = getFusionName(cA.displayName || cA.name, cB.displayName || cB.name);
+          const hadPrismforge = !!state.caughtIds.c18;
+
+          state.fusionsForged += 1;
+          state.fusionGallery.unshift([cA.id, cB.id, fusion.target]);
+          if (state.fusionGallery.length > 8) state.fusionGallery = state.fusionGallery.slice(0, 8);
+          state.caughtIds.c18 = true; // First Mega-Fusion awakens #018 Prismforge!
+
+          playSound('fusion');
+          spawnConfetti(90);
+
+          const prismMsg = !hadPrismforge
+            ? ' 💎 Mythic #018 Prismforge awakened in your Pokédex!'
+            : '';
+          const fuseSummary = `MEGA-FUSION FORGED: ${hybridName} (Power ${fusion.target})!${prismMsg}`;
+          const rewardInfo = grantRewards(40, 40, fuseSummary);
+
+          if (state.fusionsForged >= 3) {
+            const prefix = rewardInfo.evolvedTo
+              ? `${fuseSummary} ✨ Partner evolved into ${rewardInfo.evolvedTo}!`
+              : fuseSummary;
+            unlockBadge('cosmic', 'Cosmic Mega-Fusion Badge', prefix);
+          }
+
+          saveState();
+          renderPokedexStage();
+          populateFusionPickers();
+          updateCosmicHeaderStats();
+          generateFusionPuzzle();
+          return;
+        } else {
+          playSound('oops');
+          showBanner('🧬', `Final Crystal reached ${fusion.crystals[0].val}, but Target Power is ${fusion.target}! Tap ↩️ Undo or 🔄 Reset Crystals to try a new recipe!`, 'amber');
+        }
+      } else {
+        playSound('attack');
+      }
+      renderFusionUI();
+    }
+
+    function renderFusionGallery() {
+      const grid = document.getElementById('fusionGalleryGrid');
+      const countEl = document.getElementById('fusionGalleryCount');
+      if (countEl) countEl.textContent = String(state.fusionsForged);
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      if (!state.fusionGallery || state.fusionGallery.length === 0) {
+        grid.innerHTML = '<div class="col-span-full p-4 rounded-2xl bg-slate-950/70 border border-dashed border-slate-700 text-center text-xs text-slate-400">No Mega-Fusions forged yet! Combine the Energy Crystals above to create your first custom hybrid creature!</div>';
+        return;
+      }
+
+      state.fusionGallery.forEach((entry) => {
+        const cA = getCreatureById(entry[0]);
+        const cB = getCreatureById(entry[1]);
+        const pwr = entry[2];
+        const hybridName = getFusionName(cA.displayName || cA.name, cB.displayName || cB.name);
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = 'p-3 rounded-2xl bg-slate-950/90 hover:bg-slate-900 border border-pink-400/40 text-center transition flex flex-col items-center gap-1.5';
+        card.innerHTML = `
+          <div class="w-16 h-16 flex items-center justify-center">${renderFusionSvg(cA, cB, 'w-16 h-16')}</div>
+          <div class="text-sm font-extrabold text-white game-font">${hybridName}</div>
+          <div class="text-[10px] font-bold text-slate-400">${cA.displayName || cA.name} + ${cB.displayName || cB.name}</div>
+          <span class="text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/40">⚡ Power ${pwr}</span>
+        `;
+        card.addEventListener('click', () => {
+          playSound('fusion');
+          speakText(`Mega Fusion ${hybridName}! Fused from ${cA.displayName || cA.name} and ${cB.displayName || cB.name} with Power Level ${pwr}!`);
+        });
+        grid.appendChild(card);
+      });
+    }
+
+    document.querySelectorAll('.fusion-op-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (fusion.selectedIdxA === null) {
+          playSound('oops');
+          showBanner('🧬', 'Tap your first Energy Crystal number before choosing an operator!', 'amber');
+          return;
+        }
+        fusion.selectedOp = btn.getAttribute('data-fop');
+        playSound('attack');
+        renderFusionUI();
+      });
+    });
+
+    document.getElementById('fusionSelectA').addEventListener('change', (e) => {
+      fusion.idA = e.target.value;
+      playSound('attack');
+      renderFusionPreview();
+    });
+
+    document.getElementById('fusionSelectB').addEventListener('change', (e) => {
+      fusion.idB = e.target.value;
+      playSound('attack');
+      renderFusionPreview();
+    });
+
+    document.getElementById('fusionRandomPairBtn').addEventListener('click', () => {
+      const caughtList = POKEDEX_CREATURES.filter((c) => !!state.caughtIds[c.id]);
+      if (caughtList.length >= 2) {
+        const picks = shuffleArray(caughtList);
+        fusion.idA = picks[0].id;
+        fusion.idB = picks[1].id;
+        document.getElementById('fusionSelectA').value = fusion.idA;
+        document.getElementById('fusionSelectB').value = fusion.idB;
+        playSound('fusion');
+        renderFusionPreview();
+      }
+    });
+
+    document.getElementById('fusionUndoBtn').addEventListener('click', () => {
+      if (fusion.history.length === 0) return;
+      const prev = fusion.history.pop();
+      fusion.crystals = prev.crystals;
+      fusion.steps = prev.steps;
+      fusion.selectedIdxA = null;
+      fusion.selectedOp = null;
+      playSound('attack');
+      renderFusionUI();
+    });
+
+    document.getElementById('fusionResetBtn').addEventListener('click', () => {
+      playSound('attack');
+      resetFusionCrystalsToStart();
+    });
+
+    document.getElementById('fusionHintBtn').addEventListener('click', () => {
+      const box = document.getElementById('fusionHintBox');
+      const firstStep = fusion.solutionSteps[0] || 'Multiply two crystals first to get close to the Target Power!';
+      box.textContent = `🔍 Poké-Scanner Step 1 Hint: Try starting with ${firstStep} (from the original crystals)!`;
+      box.classList.remove('hidden');
+      playSound('attack');
+    });
+
+    document.getElementById('fusionNewPuzzleBtn').addEventListener('click', () => {
+      playSound('laser');
+      generateFusionPuzzle();
     });
 
     // =====================================================
@@ -4003,6 +5859,8 @@
       spawnArcadeWave();
       drawArcadeFrame();
       clearScratchCanvas();
+      resetRadarExpeditionForGrade();
+      generateFusionPuzzle();
       saveState();
       updateHeaderAndHqUI();
       renderWarmupOrbs();
@@ -4010,7 +5868,7 @@
       loadNextBattleQuestion();
       loadNextSpeedQuestion();
       playSound('attack');
-      showBanner('🔄', 'Daily Boards, Timers & Scratchpad Reset! (Ozias’s Pokédex, Coins, XP & Gym Badges are safely preserved!)', 'emerald');
+      showBanner('🔄', 'Daily Boards, Timers & Scratchpad Reset! (Ozias’s Pokédex, Coins, XP, Fusions & Gym Badges are safely preserved!)', 'emerald');
     }
 
     document.getElementById('topResetDailyBtn').addEventListener('click', resetDailyBoardsOnly);
@@ -4029,6 +5887,9 @@
       spawnArcadeWave();
       drawArcadeFrame();
       renderPokedexStage();
+      resetRadarExpeditionForGrade();
+      populateFusionPickers();
+      generateFusionPuzzle();
       renderSessionLogList();
       syncInlineFormAndTelemetry();
     }
@@ -4053,13 +5914,15 @@
       const btn = document.getElementById('fullResetProgressBtn');
       if (btn) {
         btn.textContent = 'Reset All Career Progress';
-        btn.className = 'text-xs text-rose-300 hover:underline font-bold';
+        btn.className = 'bg-transparent border-0 p-0 text-xs text-rose-300 hover:underline font-bold';
       }
     }
 
     function openParentAndSyncModal() {
       resetSyncInputReadonly();
       disarmFullResetBtn();
+      const modalToast = document.getElementById('hubModalFeedback');
+      if (modalToast) modalToast.classList.add('hidden');
       saveState();
       renderSessionLogList();
       document.getElementById('hubModal').classList.remove('hidden');
@@ -4067,6 +5930,8 @@
 
     function closeParentAndSyncModal() {
       document.getElementById('hubModal').classList.add('hidden');
+      const modalToast = document.getElementById('hubModalFeedback');
+      if (modalToast) modalToast.classList.add('hidden');
       resetSyncInputReadonly();
       disarmFullResetBtn();
     }
@@ -4113,11 +5978,11 @@
       const serialized = JSON.stringify(payload).replace(/</g, '\\u003c');
       const docClone = document.documentElement.cloneNode(true);
 
-      // Ensure exported HTML opens cleanly at League HQ with modal and feedback banners hidden
-      const modalClone = docClone.querySelector('#hubModal');
-      if (modalClone) modalClone.classList.add('hidden');
-      const bannerClone = docClone.querySelector('#feedbackBanner');
-      if (bannerClone) bannerClone.classList.add('hidden');
+      // Ensure exported HTML opens cleanly at League HQ with modal, banners, and hint boxes hidden
+      ['#hubModal', '#hubModalFeedback', '#feedbackBanner', '#battleHintBox', '#speedStrategyTip', '#questStepHint', '#radarHintBox', '#fusionHintBox'].forEach((sel) => {
+        const el = docClone.querySelector(sel);
+        if (el) el.classList.add('hidden');
+      });
 
       const snapClone = docClone.querySelector('#syncJsonSnapshotInput');
       if (snapClone) {
@@ -4129,22 +5994,71 @@
       const resetBtnClone = docClone.querySelector('#fullResetProgressBtn');
       if (resetBtnClone) {
         resetBtnClone.textContent = 'Reset All Career Progress';
-        resetBtnClone.className = 'text-xs text-rose-300 hover:underline font-bold';
+        resetBtnClone.className = 'bg-transparent border-0 p-0 text-xs text-rose-300 hover:underline font-bold';
       }
 
-      // Normalize active tab back to League HQ so DOM matches initial state.activeTab = 'hq'
+      const speedStartClone = docClone.querySelector('#speedStartBtn');
+      if (speedStartClone) speedStartClone.textContent = '▶ Start Sprint';
+      const arcadeStartClone = docClone.querySelector('#arcadeStartToggleBtn');
+      if (arcadeStartClone) arcadeStartClone.textContent = '▶ Start Volt-Runner!';
+
+      // Normalize active tab & all sub-views back to defaults so DOM matches initial boot state
       docClone.querySelectorAll('.stage-view').forEach((sec) => {
-        if (sec.id === 'view-hq') {
-          sec.classList.remove('hidden');
-        } else {
-          sec.classList.add('hidden');
-        }
+        sec.classList.toggle('hidden', sec.id !== 'view-hq');
       });
       docClone.querySelectorAll('.nav-tab').forEach((btn) => {
-        const isHq = btn.getAttribute('data-tab') === 'hq';
-        btn.className = isHq
-          ? 'nav-tab px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-amber-400 text-slate-950 shadow'
-          : 'nav-tab px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-slate-800/90 text-slate-200 hover:bg-slate-700';
+        const key = btn.getAttribute('data-tab');
+        if (key === 'hq') {
+          btn.className = 'nav-tab px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-amber-400 text-slate-950 shadow';
+        } else if (key === 'cosmic') {
+          btn.className = 'nav-tab px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-slate-800/90 text-cyan-200 hover:bg-slate-700 border border-cyan-400/40';
+        } else {
+          btn.className = 'nav-tab px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition bg-slate-800/90 text-slate-200 hover:bg-slate-700';
+        }
+      });
+
+      // Normalize Arena 1 move category pills to 'all'
+      docClone.querySelectorAll('.move-cat-btn').forEach((b) => {
+        const active = b.getAttribute('data-move-cat') === 'all';
+        b.className = active
+          ? 'move-cat-btn px-2.5 py-1.5 rounded-xl text-xs font-extrabold bg-amber-400 text-slate-950 transition'
+          : 'move-cat-btn px-2.5 py-1.5 rounded-xl text-xs font-extrabold bg-slate-800 text-slate-200 hover:bg-slate-700 transition';
+      });
+
+      // Normalize Arena 2 sub-views to 'drill'
+      ['drill', 'grid'].forEach((m) => {
+        const el = docClone.querySelector(`#speedSub-${m}`);
+        if (el) el.classList.toggle('hidden', m !== 'drill');
+      });
+      docClone.querySelectorAll('.speed-sub-btn').forEach((b) => {
+        const active = b.getAttribute('data-speed-sub') === 'drill';
+        b.className = active
+          ? 'speed-sub-btn px-4 py-2 rounded-xl text-xs font-extrabold bg-sky-400 text-slate-950 transition'
+          : 'speed-sub-btn px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-800 text-slate-200 hover:bg-slate-700 transition';
+      });
+
+      // Normalize Arena 3 sub-views to 'area'
+      ['area', 'fractions', 'quests'].forEach((m) => {
+        const el = docClone.querySelector(`#labMode-${m}`);
+        if (el) el.classList.toggle('hidden', m !== 'area');
+      });
+      docClone.querySelectorAll('.lab-mode-btn').forEach((b) => {
+        const active = b.getAttribute('data-lab-mode') === 'area';
+        b.className = active
+          ? 'lab-mode-btn px-3.5 py-2 rounded-xl text-xs font-extrabold bg-emerald-400 text-slate-950 transition'
+          : 'lab-mode-btn px-3.5 py-2 rounded-xl text-xs font-extrabold bg-slate-800 text-slate-200 hover:bg-slate-700 transition';
+      });
+
+      // Normalize Arena 6 sub-views to 'radar'
+      ['radar', 'fusion'].forEach((m) => {
+        const el = docClone.querySelector(`#cosmicSub-${m}`);
+        if (el) el.classList.toggle('hidden', m !== 'radar');
+      });
+      docClone.querySelectorAll('.cosmic-sub-btn').forEach((b) => {
+        const active = b.getAttribute('data-cosmic-sub') === 'radar';
+        b.className = active
+          ? 'cosmic-sub-btn px-4 py-2 rounded-xl text-xs font-extrabold bg-cyan-400 text-slate-950 transition shadow'
+          : 'cosmic-sub-btn px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-800 text-slate-200 hover:bg-slate-700 transition';
       });
 
       // Strip Tailwind CDN runtime-injected <style> tags while preserving our static offline-fallback <style>
@@ -4284,7 +6198,7 @@
         fullResetArmed = true;
         btn.textContent = '⚠️ Click Again to Confirm Full Reset';
         btn.className = 'text-xs px-2 py-0.5 rounded-lg bg-rose-600 text-white font-extrabold';
-        showBanner('⚠️', 'Click "Confirm Full Reset" again within 5 seconds to erase all Pokédex catches, XP, Coins & Badges.', 'rose');
+        showBanner('⚠️', 'Click "Confirm Full Reset" again within 5 seconds to erase all Pokédex catches, XP, Coins, Fusions & Badges.', 'rose');
         fullResetArmTimer = setTimeout(disarmFullResetBtn, 5000);
         return;
       }
@@ -4302,12 +6216,16 @@
       state.enemyHp = 100;
       state.enemyMaxHp = 100;
       state.isBossBattle = false;
-      state.badges = { boulder: false, cascade: false, thunder: false, rainbow: false, master: false };
+      state.badges = { boulder: false, cascade: false, thunder: false, rainbow: false, master: false, cosmic: false };
       state.caughtIds = { c1: true, c2: true, c3: true, c4: true };
       state.masteredCells = {};
+      state.radarMissionsWon = 0;
+      state.fusionsForged = 0;
+      state.fusionGallery = [];
       Object.keys(state.sessionLog).forEach((k) => { state.sessionLog[k] = false; });
       stopSpeedTimer(true);
       pauseArcade();
+      stopRadarAnim();
       arcade.gatesCleared = 0;
       arcade.speed = 2.3;
       document.getElementById('arcadeScorePill').textContent = 'Gates Cleared: 0 / 6';
@@ -4334,6 +6252,9 @@
       spawnArcadeWave();
       resizeArcadeCanvas();
       renderPokedexStage();
+      resetRadarExpeditionForGrade();
+      populateFusionPickers();
+      generateFusionPuzzle();
       renderSessionLogList();
       syncInlineFormAndTelemetry();
     });
